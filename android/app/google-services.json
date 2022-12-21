@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "949076644731",
+    "firebase_url": "https://kawanlamamrbsworkspace-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "kawanlamamrbsworkspace",
+    "storage_bucket": "kawanlamamrbsworkspace.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949076644731:android:c66a48a6082938737563de",
+        "android_client_info": {
+          "package_name": "com.example.mrbs_tablet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "949076644731-7sjq71tm7oisl027nbjoaglevqbsk0v8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCMImj7StW30juDLPmOqBB5TZhtyIdvp4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "949076644731-7sjq71tm7oisl027nbjoaglevqbsk0v8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
