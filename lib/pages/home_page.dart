@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:mrbs_tablet/api_request.dart';
 import 'package:mrbs_tablet/constant/color.dart';
 import 'package:mrbs_tablet/constant/text_style.dart';
@@ -293,263 +294,408 @@ class _HomePageState extends State<HomePage> {
             maxWidth: MediaQuery.of(context).size.width,
           ),
           child: Container(
-            // color: Colors.amber,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/BG.png'), fit: BoxFit.cover),
-            ),
+            color: white,
+            // decoration: const BoxDecoration(
+            //   image: DecorationImage(
+            //       image: AssetImage('assets/BG.png'), fit: BoxFit.cover),
+            // ),
             padding: const EdgeInsets.symmetric(
-              horizontal: 40,
+              horizontal: 50,
               vertical: 30,
             ),
             child: Container(
               // color: Colors.blueGrey,
               height: double.infinity,
               width: double.infinity,
-              child: Stack(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 100,
-                              child: Text(
-                                roomType,
-                                style: helveticaText.copyWith(
-                                  fontSize: 24,
-                                  color: scaffoldBg,
-                                  height: 1.3,
-                                ),
-                                maxLines: 2,
-                                textAlign: TextAlign.right,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => InitiateRoomDialog(),
-                                ).then((value) {
-                                  // roomId = model.roomId;
-                                  getDetailRoom(model.roomId)
-                                      .then((value) async {
-                                    print(value);
-
-                                    setState(() {
-                                      model.setRoomName(
-                                          value['Data']['RoomName']);
-                                      roomName = value['Data']['RoomName'];
-                                      roomType = value['Data']['RoomTypeName'];
-                                      roomCapacity = value['Data']
-                                              ['MaxCapacity']
-                                          .toString();
-                                    });
-                                  });
-                                });
-                              },
-                              child: Text(
-                                roomName,
-                                style: arialText.copyWith(
-                                  fontSize: 69,
-                                  fontWeight: FontWeight.w900,
-                                  color: scaffoldBg,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          width: 180,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            border: Border.all(
-                              color: scaffoldBg,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.people,
-                                color: scaffoldBg,
-                              ),
-                              const SizedBox(
-                                width: 15,
-                              ),
-                              Text(
-                                'Up to $roomCapacity',
-                                style: helveticaText.copyWith(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w300,
-                                  color: scaffoldBg,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 75,
-                        ),
-                        isLoadingChangeStatus
-                            ? const Center(
-                                child: SizedBox(
-                                  height: 100,
-                                  width: 100,
-                                  child: CircularProgressIndicator(
-                                    color: greenAcent,
-                                  ),
-                                ),
-                              )
-                            : Builder(
-                                builder: (context) {
-                                  switch (status) {
-                                    case "Available":
-                                      return availableWidget();
-                                    case "Waiting":
-                                      return waitingWidget();
-                                    case "In Use":
-                                      return inUseWidget();
-                                    default:
-                                      return availableWidget();
-                                  }
-                                },
-                              ),
-                        // inUseWidget(),
-                        // availableWidget(),
-                        // waitingWidget(),
-                        // Row(
-                        //   children: [
-                        //     ElevatedButton(
-                        //       onPressed: () {
-                        //         setStatusRoom();
-                        //       },
-                        //       child: Text('Get Data'),
-                        //     ),
-                        //   ],
-                        // ),
-                        // ElevatedButton(
-                        //   onPressed: () {
-                        //     showDialog(
-                        //       context: context,
-                        //       builder: (context) => CheckInOutNipDialog(
-                        //           setNip: setNip, submit: submitCheckIn),
-                        //     );
-                        //     // Navigator.push(
-                        //     //     context,
-                        //     //     MaterialPageRoute(
-                        //     //       builder: (context) => BookingPage(
-                        //     //         roomId: roomId,
-                        //     //         roomName: roomName,
-                        //     //       ),
-                        //     //     )).then((value) {
-                        //     //   setState(() {});
-                        //     // });
-                        //   },
-                        //   child: Text('button test'),
-                        // ),
-                      ],
-                    ),
+                  header(),
+                  const SizedBox(
+                    height: 30,
                   ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    child: CustomDigitalClock(
-                      time: model.time,
-                      checkDb: getData,
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Next Meeting:',
-                          style: helveticaText.copyWith(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w700,
-                            color: scaffoldBg,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: scaffoldBg, width: 1),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 25,
-                            vertical: 8,
-                          ),
-                          child: Text(
-                            nextMeeting,
-                            style: helveticaText.copyWith(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w300,
-                              color: scaffoldBg,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: scaffoldBg, width: 1),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 25,
-                            vertical: 8,
-                          ),
-                          child: Text(
-                            'View Schedule',
-                            style: helveticaText.copyWith(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w300,
-                              color: scaffoldBg,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    right: -50,
-                    child: SizedBox(
-                      width: 300,
-                      height: 75,
-                      child: FittedBox(
-                        fit: BoxFit.cover,
-                        child: SvgPicture.asset(
-                          'assets/klg_logo_tagline_white.svg',
-                        ),
-                      ),
-                    ),
+                  roomInfo(),
+                  const SizedBox(
+                    height: 30,
                   ),
                 ],
               ),
+              // child: Stack(
+              //   children: [
+              //     Center(
+              //       child: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           Row(
+              //             mainAxisAlignment: MainAxisAlignment.start,
+              //             children: [
+              //               SizedBox(
+              //                 width: 100,
+              //                 child: Text(
+              //                   roomType,
+              //                   style: helveticaText.copyWith(
+              //                     fontSize: 24,
+              //                     color: scaffoldBg,
+              //                     height: 1.3,
+              //                   ),
+              //                   maxLines: 2,
+              //                   textAlign: TextAlign.right,
+              //                 ),
+              //               ),
+              //               const SizedBox(
+              //                 width: 20,
+              //               ),
+              //               InkWell(
+              //                 onTap: () {
+              //                   showDialog(
+              //                     context: context,
+              //                     builder: (context) => InitiateRoomDialog(),
+              //                   ).then((value) {
+              //                     // roomId = model.roomId;
+              //                     getDetailRoom(model.roomId)
+              //                         .then((value) async {
+              //                       print(value);
+
+              //                       setState(() {
+              //                         model.setRoomName(
+              //                             value['Data']['RoomName']);
+              //                         roomName = value['Data']['RoomName'];
+              //                         roomType = value['Data']['RoomTypeName'];
+              //                         roomCapacity = value['Data']
+              //                                 ['MaxCapacity']
+              //                             .toString();
+              //                       });
+              //                     });
+              //                   });
+              //                 },
+              //                 child: Text(
+              //                   roomName,
+              //                   style: arialText.copyWith(
+              //                     fontSize: 69,
+              //                     fontWeight: FontWeight.w900,
+              //                     color: scaffoldBg,
+              //                   ),
+              //                 ),
+              //               )
+              //             ],
+              //           ),
+              //           const SizedBox(
+              //             height: 5,
+              //           ),
+              //           Container(
+              //             width: 180,
+              //             height: 45,
+              //             decoration: BoxDecoration(
+              //               borderRadius: BorderRadius.circular(30),
+              //               border: Border.all(
+              //                 color: scaffoldBg,
+              //               ),
+              //             ),
+              //             child: Row(
+              //               mainAxisAlignment: MainAxisAlignment.center,
+              //               crossAxisAlignment: CrossAxisAlignment.center,
+              //               children: [
+              //                 const Icon(
+              //                   Icons.people,
+              //                   color: scaffoldBg,
+              //                 ),
+              //                 const SizedBox(
+              //                   width: 15,
+              //                 ),
+              //                 Text(
+              //                   'Up to $roomCapacity',
+              //                   style: helveticaText.copyWith(
+              //                     fontSize: 24,
+              //                     fontWeight: FontWeight.w300,
+              //                     color: scaffoldBg,
+              //                   ),
+              //                 )
+              //               ],
+              //             ),
+              //           ),
+              //           const SizedBox(
+              //             height: 75,
+              //           ),
+              //           isLoadingChangeStatus
+              //               ? const Center(
+              //                   child: SizedBox(
+              //                     height: 100,
+              //                     width: 100,
+              //                     child: CircularProgressIndicator(
+              //                       color: greenAcent,
+              //                     ),
+              //                   ),
+              //                 )
+              //               : Builder(
+              //                   builder: (context) {
+              //                     switch (status) {
+              //                       case "Available":
+              //                         return availableWidget();
+              //                       case "Waiting":
+              //                         return waitingWidget();
+              //                       case "In Use":
+              //                         return inUseWidget();
+              //                       default:
+              //                         return availableWidget();
+              //                     }
+              //                   },
+              //                 ),
+              //           // inUseWidget(),
+              //           // availableWidget(),
+              //           // waitingWidget(),
+              //           // Row(
+              //           //   children: [
+              //           //     ElevatedButton(
+              //           //       onPressed: () {
+              //           //         setStatusRoom();
+              //           //       },
+              //           //       child: Text('Get Data'),
+              //           //     ),
+              //           //   ],
+              //           // ),
+              //           // ElevatedButton(
+              //           //   onPressed: () {
+              //           //     showDialog(
+              //           //       context: context,
+              //           //       builder: (context) => CheckInOutNipDialog(
+              //           //           setNip: setNip, submit: submitCheckIn),
+              //           //     );
+              //           //     // Navigator.push(
+              //           //     //     context,
+              //           //     //     MaterialPageRoute(
+              //           //     //       builder: (context) => BookingPage(
+              //           //     //         roomId: roomId,
+              //           //     //         roomName: roomName,
+              //           //     //       ),
+              //           //     //     )).then((value) {
+              //           //     //   setState(() {});
+              //           //     // });
+              //           //   },
+              //           //   child: Text('button test'),
+              //           // ),
+              //         ],
+              //       ),
+              //     ),
+              //     Positioned(
+              //       bottom: 0,
+              //       left: 0,
+              //       child: CustomDigitalClock(
+              //         time: model.time,
+              //         checkDb: getData,
+              //       ),
+              //     ),
+              //     Positioned(
+              //       bottom: 0,
+              //       right: 0,
+              //       child: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.end,
+              //         children: [
+              //           Text(
+              //             'Next Meeting:',
+              //             style: helveticaText.copyWith(
+              //               fontSize: 32,
+              //               fontWeight: FontWeight.w700,
+              //               color: scaffoldBg,
+              //             ),
+              //           ),
+              //           const SizedBox(
+              //             height: 15,
+              //           ),
+              //           Container(
+              //             decoration: BoxDecoration(
+              //               borderRadius: BorderRadius.circular(20),
+              //               border: Border.all(color: scaffoldBg, width: 1),
+              //             ),
+              //             padding: const EdgeInsets.symmetric(
+              //               horizontal: 25,
+              //               vertical: 8,
+              //             ),
+              //             child: Text(
+              //               nextMeeting,
+              //               style: helveticaText.copyWith(
+              //                 fontSize: 22,
+              //                 fontWeight: FontWeight.w300,
+              //                 color: scaffoldBg,
+              //               ),
+              //             ),
+              //           ),
+              //           const SizedBox(
+              //             height: 15,
+              //           ),
+              //           Container(
+              //             decoration: BoxDecoration(
+              //               borderRadius: BorderRadius.circular(20),
+              //               border: Border.all(color: scaffoldBg, width: 1),
+              //             ),
+              //             padding: const EdgeInsets.symmetric(
+              //               horizontal: 25,
+              //               vertical: 8,
+              //             ),
+              //             child: Text(
+              //               'View Schedule',
+              //               style: helveticaText.copyWith(
+              //                 fontSize: 22,
+              //                 fontWeight: FontWeight.w300,
+              //                 color: scaffoldBg,
+              //               ),
+              //             ),
+              //           )
+              //         ],
+              //       ),
+              //     ),
+              //     Positioned(
+              //       top: 10,
+              //       right: -50,
+              //       child: SizedBox(
+              //         width: 300,
+              //         height: 75,
+              //         child: FittedBox(
+              //           fit: BoxFit.cover,
+              //           child: SvgPicture.asset(
+              //             'assets/klg_logo_tagline_white.svg',
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ),
           ),
         ),
       );
     });
+  }
+
+  Widget header() {
+    return SizedBox(
+      child: Row(
+        children: [
+          SizedBox(
+            width: 185,
+            height: 60,
+            child: SvgPicture.asset(
+              'assets/klg_logo_tagline_black.svg',
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(
+            height: 35,
+            child: VerticalDivider(
+              color: davysGray,
+              thickness: 1,
+            ),
+          ),
+          const SizedBox(
+            width: 13,
+          ),
+          Text(
+            'Meeting Room Booking System',
+            style: helveticaText.copyWith(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: davysGray,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget roomInfo() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          width: 450,
+          height: 254,
+          decoration: BoxDecoration(
+            color: davysGray,
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        const SizedBox(
+          width: 40,
+        ),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                roomName,
+                style: helveticaText.copyWith(
+                  fontSize: 80,
+                  fontWeight: FontWeight.w900,
+                  height: 1.3,
+                  color: eerieBlack,
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 20,
+                ),
+                decoration: BoxDecoration(
+                  color: white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: eerieBlack),
+                ),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minWidth: 100,
+                    minHeight: 30,
+                    maxHeight: 30,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Wrap(
+                        spacing: 10,
+                        children: const [
+                          Icon(Icons.monitor),
+                          Icon(Icons.videocam),
+                          Icon(MdiIcons.google)
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 18,
+                      ),
+                      const VerticalDivider(
+                        color: davysGray,
+                        thickness: 1,
+                      ),
+                      const SizedBox(
+                        width: 18,
+                      ),
+                      Wrap(
+                        spacing: 10,
+                        children: [
+                          const Icon(
+                            Icons.people_outline_sharp,
+                            size: 30,
+                          ),
+                          Text(
+                            roomCapacity,
+                            style: helveticaText.copyWith(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
   }
 
   Widget inUseWidget() {

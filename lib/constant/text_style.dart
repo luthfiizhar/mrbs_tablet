@@ -4,6 +4,10 @@ const TextStyle helveticaText = TextStyle(
   fontFamily: 'Helvetica',
   height: 1.15,
 );
+const TextStyle blackHelveText = TextStyle(
+  fontFamily: 'HelveticaBlack',
+  height: 1.3,
+);
 const TextStyle arialText = TextStyle(
   fontFamily: 'Arial',
   height: 1.41,

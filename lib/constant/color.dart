@@ -25,3 +25,4 @@ const Color blueAccent = Color(0xFF0097D6);
 const Color platinumLight = Color(0xFFEBEBEB);
 const Color violetAccent = Color(0xFF585EAA);
 const Color tabletBg = Color(0xFF505050);
+const Color yellow = Color(0xFFFFCB1F);

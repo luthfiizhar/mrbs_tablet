@@ -110,6 +110,7 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
                                     width: 25,
                                     height: 25,
                                     child: RegularButton(
+                                      fontSize: 12,
                                       disabled: false,
                                       text: '-',
                                       onTap: () {
@@ -147,6 +148,7 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
                                     width: 25,
                                     height: 25,
                                     child: RegularButton(
+                                      fontSize: 12,
                                       disabled: false,
                                       text: '+',
                                       onTap: () {

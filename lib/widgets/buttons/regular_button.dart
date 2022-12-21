@@ -19,14 +19,14 @@ class ButtonSize {
   }
 
   EdgeInsetsGeometry itemQtyButton() {
-    return const EdgeInsets.symmetric(horizontal: 5, vertical: 5);
+    return const EdgeInsets.symmetric(horizontal: 0, vertical: 0);
   }
 }
 
 class WhiteRegularButton extends StatelessWidget {
   const WhiteRegularButton({
     required this.text,
-    this.fontSize,
+    this.fontSize = 16,
     this.onTap,
     required this.disabled,
     this.padding,
@@ -159,7 +159,7 @@ class RegularButton extends StatelessWidget {
         textStyle: MaterialStateProperty.resolveWith<TextStyle>(
           (states) {
             return TextStyle(
-              fontSize: 16,
+              fontSize: fontSize,
               fontWeight: fontWeight,
               fontFamily: 'Helvetica',
               height: 1.15,

@@ -55,14 +55,14 @@ class CustomRadioButton extends StatelessWidget {
                     if (states.contains(MaterialState.selected)) {
                       return eerieBlack;
                     }
-                    return white;
+                    return eerieBlack;
                   }),
                   overlayColor: MaterialStateProperty.resolveWith<Color>(
                     (states) {
                       // if (states.contains(MaterialState.hovered)) {
                       //   return davysGray;
                       // }
-                      return white;
+                      return eerieBlack;
                     },
                   ),
                 ),

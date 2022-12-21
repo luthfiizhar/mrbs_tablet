@@ -50,6 +50,7 @@ dependencies:
   wakelock: ^0.6.2
   dotted_border: ^2.0.0+3
   syncfusion_flutter_calendar: ^20.3.60
+  material_design_icons_flutter: ^6.0.7096
 
 dev_dependencies:
   flutter_test:
@@ -107,12 +108,16 @@ flutter:
       fonts:
         - asset: assets/fonts/Helvetica-01.ttf
           weight: 400
-        - asset: assets/fonts/Helvetica Black.ttf
-          weight: 900
         - asset: assets/fonts/Helvetica-Bold-02.ttf
           weight: 700
         - asset: assets/fonts/Helvetica-Light-05.ttf
           weight: 300
+        - asset: assets/fonts/Helvetica Black.ttf
+          weight: 900
+    - family: HelveticaBlack
+      fonts:
+        - asset: assets/fonts/Helvetica Black.ttf
+          weight: 400
     - family: Arial
       fonts:
         - asset: assets/fonts/Arial/ariblk.ttf

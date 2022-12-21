@@ -71,7 +71,8 @@ class _BookingPageState extends State<BookingPage> {
     if (minute >= 0 && minute < 15) {
       minute =
           TimeOfDay.fromDateTime(widget.today!).replacing(minute: 0).minute;
-      startTime = "${hour.toString().padLeft(2, '0')}:$minute";
+      startTime =
+          "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}";
     } else if (minute > 15 && minute <= 30) {
       minute =
           TimeOfDay.fromDateTime(widget.today!).replacing(minute: 15).minute;
@@ -84,8 +85,8 @@ class _BookingPageState extends State<BookingPage> {
       minute =
           TimeOfDay.fromDateTime(widget.today!).replacing(minute: 45).minute;
       // hour = hour + 1;
-      // startTime =
-      //     "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}";
+      startTime =
+          "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}";
     }
     endMinute = minute + 15;
     if (endMinute == 60) {
@@ -585,6 +586,7 @@ class _BookingPageState extends State<BookingPage> {
                 child: InkWell(
                   onTap: () {
                     showDialog(
+                      barrierDismissible: false,
                       context: context,
                       builder: (context) => SelectAmenitiesDialog(
                         listAmen: resultAmenities,
@@ -656,6 +658,7 @@ class _BookingPageState extends State<BookingPage> {
                   onTap: () {
                     showDialog(
                       context: context,
+                      barrierDismissible: false,
                       builder: (context) => SelectFoodDialog(
                         listFood: resultFoodAmenities,
                         setListFood: setListFood,
