@@ -8,11 +8,15 @@ class ButtonSize {
   }
 
   EdgeInsetsGeometry mediumSize() {
-    return const EdgeInsets.symmetric(horizontal: 59, vertical: 13);
+    return const EdgeInsets.symmetric(horizontal: 59, vertical: 20);
   }
 
   EdgeInsetsGeometry smallSize() {
     return const EdgeInsets.symmetric(horizontal: 32, vertical: 20);
+  }
+
+  EdgeInsetsGeometry scheduleButton() {
+    return const EdgeInsets.symmetric(horizontal: 32, vertical: 13);
   }
 
   EdgeInsetsGeometry loginButotn() {

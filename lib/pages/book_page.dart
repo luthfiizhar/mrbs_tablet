@@ -586,7 +586,7 @@ class _BookingPageState extends State<BookingPage> {
                 child: InkWell(
                   onTap: () {
                     showDialog(
-                      barrierDismissible: false,
+                      // barrierDismissible: false,
                       context: context,
                       builder: (context) => SelectAmenitiesDialog(
                         listAmen: resultAmenities,
@@ -658,7 +658,7 @@ class _BookingPageState extends State<BookingPage> {
                   onTap: () {
                     showDialog(
                       context: context,
-                      barrierDismissible: false,
+                      // barrierDismissible: false,
                       builder: (context) => SelectFoodDialog(
                         listFood: resultFoodAmenities,
                         setListFood: setListFood,

@@ -8,6 +8,8 @@ class MrbsTabletModel extends ChangeNotifier {
 
   get roomId => _room.roomId;
   get roomName => _room.roomName;
+  get roomAlias => _room.roomAlias;
+  get roomType => _room.roomType;
   get time => _time;
 
   void setRoom(Room value) {
@@ -20,8 +22,10 @@ class MrbsTabletModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setRoomName(String value) {
+  void setRoomName(String value, String alias, String type) {
     _room.roomName = value;
+    _room.roomAlias = alias;
+    _room.roomType = type;
     notifyListeners();
   }
 

@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:intl/intl.dart';
 import 'package:mrbs_tablet/constant/color.dart';
+import 'package:mrbs_tablet/constant/text_style.dart';
 import 'package:mrbs_tablet/model/model.dart';
 import 'package:mrbs_tablet/model/room_event_class.dart';
 import 'package:mrbs_tablet/model/room_event_data_source.dart';
@@ -184,7 +185,7 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: SizedBox(
-                  width: 410,
+                  width: 610,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -195,7 +196,7 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
                           height: 300,
                           width: 80,
                           decoration: BoxDecoration(
-                            color: culturedWhite,
+                            color: white,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           padding: const EdgeInsets.all(15),
@@ -255,20 +256,31 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
                             top: 20,
                             bottom: 20,
                           ),
-                          height: 500,
-                          width: 300,
+                          height: 800,
+                          width: 510,
                           decoration: BoxDecoration(
-                            color: culturedWhite,
+                            color: white,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '${widget.roomName} Schedule',
+                                '${Provider.of<MrbsTabletModel>(context).roomType}',
+                                style: helveticaText.copyWith(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w300,
+                                  color: davysGray,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                '${Provider.of<MrbsTabletModel>(context).roomAlias}',
                                 style: const TextStyle(
                                   fontFamily: 'Helvetica',
-                                  fontSize: 18,
+                                  fontSize: 48,
                                   fontWeight: FontWeight.w700,
                                   color: eerieBlack,
                                 ),
@@ -318,7 +330,7 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
                                       timeFormat: 'H:mm',
                                       startHour: 5,
                                       endHour: 20,
-                                      timeIntervalHeight: 26,
+                                      timeIntervalHeight: -1,
                                       timeTextStyle: TextStyle(
                                         fontFamily: 'Helvetica',
                                         fontSize: 14,
@@ -372,7 +384,7 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
               style: TextStyle(
                 fontFamily: 'Helvetica',
                 fontSize: 14,
-                color: appointment.isDark ? culturedWhite : eerieBlack,
+                color: appointment.isDark ? white : eerieBlack,
                 fontWeight: FontWeight.w700,
               ),
             ),

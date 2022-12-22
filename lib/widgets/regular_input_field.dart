@@ -14,6 +14,9 @@ class RegularInputField extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.textAlign = TextAlign.start,
     this.validator,
+    this.contentPadding =
+        const EdgeInsets.symmetric(horizontal: 15, vertical: 8.5),
+    this.fontSize = 22,
   });
 
   FocusNode? focusNode;
@@ -25,6 +28,8 @@ class RegularInputField extends StatelessWidget {
   FormFieldValidator? validator;
   TextCapitalization textCapitalization;
   TextAlign textAlign;
+  EdgeInsets contentPadding;
+  double fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -59,18 +64,15 @@ class RegularInputField extends StatelessWidget {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 8.5,
-        ),
+        contentPadding: contentPadding,
         hintStyle: helveticaText.copyWith(
-          fontSize: 22,
+          fontSize: fontSize,
           fontWeight: FontWeight.w300,
         ),
         hintText: hintText,
       ),
       style: helveticaText.copyWith(
-        fontSize: 22,
+        fontSize: fontSize,
         fontWeight: FontWeight.w300,
       ),
       textAlign: textAlign,

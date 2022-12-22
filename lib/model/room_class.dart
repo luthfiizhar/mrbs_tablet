@@ -2,6 +2,8 @@ class Room {
   Room({
     this.roomId = "",
     this.roomName = "",
+    this.roomType = "",
+    this.roomAlias = "",
     this.status = "",
     this.empName = "",
     this.empNip = "",
@@ -12,12 +14,14 @@ class Room {
 
   String? bookingId;
   String? roomId;
+  String? roomAlias;
   String? roomName;
   String? status;
   String? empName;
   String? empNip;
   String? duration;
   String? summary;
+  String? roomType;
 
   Room.fromJson(Map<String, dynamic> response) {
     bookingId = response['BookingID'];

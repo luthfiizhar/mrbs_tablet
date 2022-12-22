@@ -16,8 +16,10 @@ import 'package:mrbs_tablet/pages/book_page.dart';
 import 'package:mrbs_tablet/widgets/buttons/regular_button.dart';
 import 'package:mrbs_tablet/widgets/clock.dart';
 import 'package:mrbs_tablet/widgets/dialogs/alert_dialog.dart';
+import 'package:mrbs_tablet/widgets/dialogs/booking_page_input_nip.dart';
 import 'package:mrbs_tablet/widgets/dialogs/check_in_nip_dialog.dart';
 import 'package:mrbs_tablet/widgets/dialogs/initiate_room_dialog.dart';
+import 'package:mrbs_tablet/widgets/dialogs/schedulre.dart';
 import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -253,12 +255,12 @@ class _HomePageState extends State<HomePage> {
       nextMeetingListener(event.snapshot.value!);
     });
     getDetailRoom(roomId).then((value) async {
-      print(value);
-
       setState(() {
-        Provider.of<MrbsTabletModel>(context, listen: false)
-            .setRoomName(value['Data']['RoomName']);
-        roomName = value['Data']['RoomAlias'];
+        Provider.of<MrbsTabletModel>(context, listen: false).setRoomName(
+            value['Data']['RoomName'],
+            value['Data']['RoomAlias'] ?? "TEST AUDI",
+            value['Data']['RoomTypeName']);
+        roomName = value['Data']['RoomAlias'] ?? "TEST AUDI";
         roomType = value['Data']['RoomTypeName'];
         roomCapacity = value['Data']['MaxCapacity'].toString();
       });
@@ -332,6 +334,8 @@ class _HomePageState extends State<HomePage> {
                               timeInfo(),
                             ],
                           );
+                        case "Auditorium":
+                          return statusInfoAudi();
                         default:
                           return Column(
                             children: [
@@ -738,6 +742,139 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget statusInfoAudi() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 140,
+              width: 450,
+              padding: const EdgeInsets.only(
+                // top: 40,
+                // left: 50,
+                bottom: 20,
+              ),
+              decoration: BoxDecoration(
+                color: status == "In Use" ? orangeAccent : greenAcent,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: Text(
+                  status,
+                  style: blackHelveText.copyWith(
+                    fontSize: 64,
+                    color: white,
+                    height: 0,
+                    // backgroundColor: violetAccent,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 35,
+                vertical: 15,
+              ),
+              child: CustomDigitalClock(
+                time: Provider.of<MrbsTabletModel>(context).time,
+              ),
+            )
+          ],
+        ),
+        Container(
+          width: 700,
+          height: 337,
+          padding: const EdgeInsets.only(
+            left: 40,
+            right: 40,
+            top: 35,
+          ),
+          decoration: BoxDecoration(
+            border: Border.all(color: platinum, width: 1),
+            borderRadius: BorderRadius.circular(10),
+            color: white,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Today Schedule:',
+                style: helveticaText.copyWith(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w700,
+                  color: eerieBlack,
+                ),
+              ),
+              const SizedBox(
+                height: 22,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '10.00-11.30',
+                    style: helveticaText.copyWith(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 40,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Ruang kerja intern Lexicon Project',
+                          style: helveticaText.copyWith(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w700,
+                            color: davysGray,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Text(
+                          'by Edward Evannov',
+                          style: helveticaText.copyWith(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w300,
+                            color: davysGray,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 39,
+              ),
+              TransparentBorderedBlackButton(
+                text: 'See Schedule',
+                disabled: false,
+                onTap: () {},
+                padding: ButtonSize().scheduleButton(),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget inUseWidget() {
     return ConstrainedBox(
       constraints: const BoxConstraints(
@@ -771,22 +908,33 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            Container(
-              width: 350,
-              decoration: const BoxDecoration(
-                color: eerieBlack,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
+            InkWell(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => CheckInOutNipDialog(
+                    setNip: setNip,
+                    submit: submitCheckOut,
+                  ),
+                );
+              },
+              child: Container(
+                width: 350,
+                decoration: const BoxDecoration(
+                  color: eerieBlack,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
                 ),
-              ),
-              child: Center(
-                child: Text(
-                  'Check Out',
-                  style: helveticaText.copyWith(
-                    fontSize: 48,
-                    fontWeight: FontWeight.w300,
-                    color: white,
+                child: Center(
+                  child: Text(
+                    'Check Out',
+                    style: helveticaText.copyWith(
+                      fontSize: 48,
+                      fontWeight: FontWeight.w300,
+                      color: white,
+                    ),
                   ),
                 ),
               ),
@@ -832,7 +980,20 @@ class _HomePageState extends State<HomePage> {
             ),
             InkWell(
               onTap: () {
-                print('book now');
+                // Navigator.of(context).push(MaterialPageRoute(
+                //   builder: (context) => BookingPage(
+                //     roomId: roomId,
+                //     roomName: roomName,
+                //     today: DateTime.now(),
+                //   ),
+                // ));
+                showDialog(
+                  context: context,
+                  builder: (context) => CheckInOutNipDialog(
+                    setNip: setNip,
+                    submit: () {},
+                  ),
+                );
               },
               child: Container(
                 width: 350,
@@ -977,7 +1138,12 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     InkWell(
                       onTap: () {
-                        print('Check In');
+                        print(bookingId);
+                        showDialog(
+                          context: context,
+                          builder: (context) => CheckInOutNipDialog(
+                              setNip: setNip, submit: submitCheckIn),
+                        );
                       },
                       child: Text(
                         'Check In',
@@ -1194,8 +1360,13 @@ class _HomePageState extends State<HomePage> {
                   TransparentBorderedBlackButton(
                     text: 'See Schedule',
                     disabled: false,
-                    onTap: () {},
-                    padding: ButtonSize().mediumSize(),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => ScheduleDialog(),
+                      );
+                    },
+                    padding: ButtonSize().scheduleButton(),
                   )
                 ],
               ),

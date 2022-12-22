@@ -5,7 +5,7 @@ import 'package:mrbs_tablet/constant/text_style.dart';
 class TransparentButtonBlack extends StatelessWidget {
   const TransparentButtonBlack({
     required this.text,
-    this.fontSize,
+    this.fontSize = 16,
     this.onTap,
     required this.disabled,
     this.padding,
@@ -60,9 +60,9 @@ class TransparentButtonBlack extends StatelessWidget {
         ),
         textStyle: MaterialStateProperty.resolveWith<TextStyle>(
           (states) {
-            return const TextStyle(
+            return TextStyle(
               fontFamily: 'Helvetica',
-              fontSize: 16,
+              fontSize: fontSize,
               fontWeight: FontWeight.w700,
             );
           },
