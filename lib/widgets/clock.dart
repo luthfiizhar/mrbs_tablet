@@ -51,7 +51,7 @@ class _CustomDigitalClockState extends State<CustomDigitalClock> {
   }
 
   String _formatDay(DateTime dateTime) {
-    return DateFormat('EEEE, dd MMMM yyyy').format(dateTime);
+    return DateFormat('dd MMM yyyy').format(dateTime);
   }
 
   @override
@@ -70,9 +70,9 @@ class _CustomDigitalClockState extends State<CustomDigitalClock> {
           Text(
             widget.time,
             style: helveticaText.copyWith(
-              fontSize: 64,
-              fontWeight: FontWeight.w900,
-              color: scaffoldBg,
+              fontSize: 56,
+              fontWeight: FontWeight.w700,
+              color: eerieBlack,
             ),
           ),
           const SizedBox(
@@ -83,7 +83,7 @@ class _CustomDigitalClockState extends State<CustomDigitalClock> {
             style: helveticaText.copyWith(
               fontSize: 32,
               fontWeight: FontWeight.w300,
-              color: scaffoldBg,
+              color: davysGray,
             ),
           ),
         ],

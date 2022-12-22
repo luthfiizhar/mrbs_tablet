@@ -112,11 +112,11 @@ flutter:
           weight: 700
         - asset: assets/fonts/Helvetica-Light-05.ttf
           weight: 300
-        - asset: assets/fonts/Helvetica Black.ttf
+        - asset: assets/fonts/Helvetica-Black.ttf
           weight: 900
-    - family: HelveticaBlack
+    - family: Helvetica Black
       fonts:
-        - asset: assets/fonts/Helvetica Black.ttf
+        - asset: assets/fonts/Helvetica-Black.ttf
           weight: 400
     - family: Arial
       fonts:

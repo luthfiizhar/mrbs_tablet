@@ -13,6 +13,7 @@ import 'package:mrbs_tablet/model/event_class.dart';
 import 'package:mrbs_tablet/model/model.dart';
 import 'package:mrbs_tablet/model/room_class.dart';
 import 'package:mrbs_tablet/pages/book_page.dart';
+import 'package:mrbs_tablet/widgets/buttons/regular_button.dart';
 import 'package:mrbs_tablet/widgets/clock.dart';
 import 'package:mrbs_tablet/widgets/dialogs/alert_dialog.dart';
 import 'package:mrbs_tablet/widgets/dialogs/check_in_nip_dialog.dart';
@@ -257,7 +258,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         Provider.of<MrbsTabletModel>(context, listen: false)
             .setRoomName(value['Data']['RoomName']);
-        roomName = value['Data']['RoomName'];
+        roomName = value['Data']['RoomAlias'];
         roomType = value['Data']['RoomTypeName'];
         roomCapacity = value['Data']['MaxCapacity'].toString();
       });
@@ -312,11 +313,37 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   header(),
                   const SizedBox(
-                    height: 30,
+                    height: 75,
                   ),
                   roomInfo(),
                   const SizedBox(
                     height: 30,
+                  ),
+                  Builder(
+                    builder: (context) {
+                      switch (roomType) {
+                        case "Meeting Room":
+                          return Column(
+                            children: [
+                              statusInfo(),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              timeInfo(),
+                            ],
+                          );
+                        default:
+                          return Column(
+                            children: [
+                              statusInfo(),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              timeInfo(),
+                            ],
+                          );
+                      }
+                    },
                   ),
                 ],
               ),
@@ -569,31 +596,124 @@ class _HomePageState extends State<HomePage> {
   Widget header() {
     return SizedBox(
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(
-            width: 185,
-            height: 60,
-            child: SvgPicture.asset(
-              'assets/klg_logo_tagline_black.svg',
-              fit: BoxFit.cover,
-            ),
+          Row(
+            children: [
+              SizedBox(
+                width: 185,
+                height: 60,
+                child: Image.asset(
+                  'assets/navbarlogo.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(
+                height: 35,
+                child: VerticalDivider(
+                  color: davysGray,
+                  thickness: 1,
+                ),
+              ),
+              const SizedBox(
+                width: 13,
+              ),
+              Text(
+                'Meeting Room Booking System',
+                style: helveticaText.copyWith(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: davysGray,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(
-            height: 35,
-            child: VerticalDivider(
-              color: davysGray,
-              thickness: 1,
-            ),
-          ),
-          const SizedBox(
-            width: 13,
-          ),
+          const Icon(
+            Icons.settings_outlined,
+            color: eerieBlack,
+            size: 40,
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget roomInfo() {
+    return Container(
+      // color: greenAcent,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
-            'Meeting Room Booking System',
+            roomName,
             style: helveticaText.copyWith(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: davysGray,
+              fontSize: 128,
+              color: eerieBlack,
+              fontWeight: FontWeight.w900,
+              height: 0,
+              // backgroundColor: violetAccent,
+            ),
+          ),
+          const SizedBox(
+            height: 80,
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 20,
+            ),
+            decoration: BoxDecoration(
+              color: white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: eerieBlack),
+            ),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minWidth: 100,
+                minHeight: 30,
+                maxHeight: 30,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Wrap(
+                    spacing: 10,
+                    children: const [
+                      Icon(Icons.monitor),
+                      Icon(Icons.videocam),
+                      Icon(MdiIcons.google)
+                    ],
+                  ),
+                  const SizedBox(
+                    width: 18,
+                  ),
+                  const VerticalDivider(
+                    color: davysGray,
+                    thickness: 1,
+                  ),
+                  const SizedBox(
+                    width: 18,
+                  ),
+                  Wrap(
+                    spacing: 10,
+                    children: [
+                      const Icon(
+                        Icons.people_outline_sharp,
+                        size: 30,
+                      ),
+                      Text(
+                        roomCapacity,
+                        style: helveticaText.copyWith(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -601,402 +721,515 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget roomInfo() {
+  statusInfo() {
+    return Builder(
+      builder: (context) {
+        switch (status) {
+          case "Available":
+            return availableWidget();
+          case "In Use":
+            return inUseWidget();
+          case "Waiting":
+            return waitingWidget();
+          default:
+            return availableWidget();
+        }
+      },
+    );
+  }
+
+  Widget inUseWidget() {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: 140,
+        maxHeight: 140,
+      ),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: orangeAccent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  // top: 40,
+                  left: 50,
+                  bottom: 20,
+                ),
+                child: Text(
+                  'In Use',
+                  style: blackHelveText.copyWith(
+                    fontSize: 64,
+                    color: white,
+                    height: 0,
+                    // backgroundColor: violetAccent,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              width: 350,
+              decoration: const BoxDecoration(
+                color: eerieBlack,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  'Check Out',
+                  style: helveticaText.copyWith(
+                    fontSize: 48,
+                    fontWeight: FontWeight.w300,
+                    color: white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget availableWidget() {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: 140,
+        maxHeight: 140,
+      ),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: greenAcent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  // top: 40,
+                  left: 50,
+                  bottom: 20,
+                ),
+                child: Text(
+                  'Available',
+                  style: blackHelveText.copyWith(
+                    fontSize: 64,
+                    color: white,
+                    height: 0,
+                    // backgroundColor: violetAccent,
+                  ),
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                print('book now');
+              },
+              child: Container(
+                width: 350,
+                decoration: const BoxDecoration(
+                  color: eerieBlack,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    'Book Now',
+                    style: helveticaText.copyWith(
+                      fontSize: 48,
+                      fontWeight: FontWeight.w300,
+                      color: white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    // return Row(
+    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //   children: [
+    //     Column(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       crossAxisAlignment: CrossAxisAlignment.start,
+    //       children: [
+    //         Text(
+    //           'Available',
+    //           style: arialText.copyWith(
+    //             fontSize: 120,
+    //             color: scaffoldBg,
+    //             fontWeight: FontWeight.w900,
+    //           ),
+    //         ),
+    //         const SizedBox(
+    //           height: 10,
+    //         ),
+    //         Text(
+    //           'Not in use',
+    //           style: helveticaText.copyWith(
+    //             fontSize: 32,
+    //             fontWeight: FontWeight.w300,
+    //             color: scaffoldBg,
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //     ElevatedButton(
+    //       style: ButtonStyle(
+    //         backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+    //           return greenAcent.withOpacity(0.8);
+    //         }),
+    //         shape: MaterialStateProperty.resolveWith<OutlinedBorder>((states) {
+    //           return RoundedRectangleBorder(
+    //             borderRadius: BorderRadius.circular(80),
+    //           );
+    //         }),
+    //         padding: MaterialStateProperty.resolveWith<EdgeInsets>((states) {
+    //           return const EdgeInsets.symmetric(
+    //             horizontal: 50,
+    //             vertical: 25,
+    //           );
+    //         }),
+    //       ),
+    //       onPressed: () {
+    //         Navigator.of(context).push(
+    //           MaterialPageRoute(
+    //             builder: (context) => BookingPage(
+    //               roomId: roomId,
+    //               roomName: roomName,
+    //               today: DateTime.now(),
+    //             ),
+    //           ),
+    //         );
+    //       },
+    //       child: Text(
+    //         'Book Now',
+    //         style: helveticaText.copyWith(
+    //           fontSize: 56,
+    //           fontWeight: FontWeight.w700,
+    //           color: scaffoldBg,
+    //           height: 1.3,
+    //         ),
+    //       ),
+    //     )
+    //   ],
+    // );
+  }
+
+  Widget waitingWidget() {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: 140,
+        maxHeight: 140,
+      ),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: yellow,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  // top: 40,
+                  left: 50,
+                  bottom: 20,
+                ),
+                child: Text(
+                  'Waiting',
+                  style: blackHelveText.copyWith(
+                    fontSize: 64,
+                    color: white,
+                    height: 0,
+                    // backgroundColor: violetAccent,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              width: 465,
+              decoration: const BoxDecoration(
+                color: eerieBlack,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        print('Check In');
+                      },
+                      child: Text(
+                        'Check In',
+                        style: helveticaText.copyWith(
+                          fontSize: 48,
+                          fontWeight: FontWeight.w300,
+                          color: white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 48,
+                    ),
+                    const SizedBox(
+                      height: 55,
+                      child: VerticalDivider(
+                        color: white,
+                        thickness: 1,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 48,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        print('Cancel');
+                      },
+                      child: const Icon(
+                        Icons.close_sharp,
+                        size: 50,
+                        color: white,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    // return Row(
+    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //   children: [
+    //     Column(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       crossAxisAlignment: CrossAxisAlignment.start,
+    //       children: [
+    //         Text(
+    //           'Waiting',
+    //           style: arialText.copyWith(
+    //             fontSize: 125,
+    //             color: grayx11,
+    //             fontWeight: FontWeight.w900,
+    //           ),
+    //         ),
+    //         const SizedBox(
+    //           height: 10,
+    //         ),
+    //         Text(
+    //           'Booked by Luthfi Izhariman - 169742',
+    //           style: helveticaText.copyWith(
+    //             fontSize: 32,
+    //             fontWeight: FontWeight.w700,
+    //             color: scaffoldBg,
+    //           ),
+    //         ),
+    //         const SizedBox(
+    //           height: 10,
+    //         ),
+    //         Text(
+    //           summary,
+    //           style: helveticaText.copyWith(
+    //             fontSize: 32,
+    //             fontWeight: FontWeight.w300,
+    //             color: scaffoldBg,
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //     Column(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       children: [
+    //         ElevatedButton(
+    //           style: ButtonStyle(
+    //             backgroundColor:
+    //                 MaterialStateProperty.resolveWith<Color>((states) {
+    //               return greenAcent.withOpacity(0.8);
+    //             }),
+    //             shape:
+    //                 MaterialStateProperty.resolveWith<OutlinedBorder>((states) {
+    //               return RoundedRectangleBorder(
+    //                 borderRadius: BorderRadius.circular(80),
+    //               );
+    //             }),
+    //             padding:
+    //                 MaterialStateProperty.resolveWith<EdgeInsets>((states) {
+    //               return const EdgeInsets.symmetric(
+    //                 horizontal: 50,
+    //                 vertical: 25,
+    //               );
+    //             }),
+    //           ),
+    //           onPressed: () {
+    //             // setState(() {
+    //             //   isLoadingChangeStatus = true;
+    //             // });
+    //             print(bookingId);
+    //             showDialog(
+    //               context: context,
+    //               builder: (context) => CheckInOutNipDialog(
+    //                   setNip: setNip, submit: submitCheckIn),
+    //             );
+    //             // checkIn(bookingId,nip).then((value) {
+    //             //   print(value);
+    //             // }).onError((error, stackTrace) {});
+    //           },
+    //           child: Text(
+    //             'Check In',
+    //             style: helveticaText.copyWith(
+    //               fontSize: 56,
+    //               fontWeight: FontWeight.w700,
+    //               color: scaffoldBg,
+    //             ),
+    //           ),
+    //         ),
+    //         const SizedBox(
+    //           height: 20,
+    //         ),
+    //         ElevatedButton(
+    //           style: ButtonStyle(
+    //             backgroundColor:
+    //                 MaterialStateProperty.resolveWith<Color>((states) {
+    //               return grayx11.withOpacity(0.8);
+    //             }),
+    //             shape:
+    //                 MaterialStateProperty.resolveWith<OutlinedBorder>((states) {
+    //               return RoundedRectangleBorder(
+    //                 borderRadius: BorderRadius.circular(80),
+    //               );
+    //             }),
+    //             padding:
+    //                 MaterialStateProperty.resolveWith<EdgeInsets>((states) {
+    //               return const EdgeInsets.symmetric(
+    //                 horizontal: 55,
+    //                 vertical: 15,
+    //               );
+    //             }),
+    //           ),
+    //           onPressed: () {},
+    //           child: Text(
+    //             'Cancel Booking',
+    //             style: helveticaText.copyWith(
+    //               fontSize: 32,
+    //               fontWeight: FontWeight.w700,
+    //               color: scaffoldBg,
+    //             ),
+    //           ),
+    //         ),
+    //       ],
+    //     )
+    //   ],
+    // );
+  }
+
+  Widget timeInfo() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Container(
-          width: 450,
-          height: 254,
-          decoration: BoxDecoration(
-            color: davysGray,
-            borderRadius: BorderRadius.circular(10),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.only(
+              left: 35,
+              top: 30,
+              bottom: 26,
+            ),
+            child: CustomDigitalClock(
+              time: Provider.of<MrbsTabletModel>(context).time,
+            ),
           ),
         ),
         const SizedBox(
           width: 40,
         ),
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                roomName,
-                style: helveticaText.copyWith(
-                  fontSize: 80,
-                  fontWeight: FontWeight.w900,
-                  height: 1.3,
-                  color: eerieBlack,
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 20,
-                ),
-                decoration: BoxDecoration(
-                  color: white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: eerieBlack),
-                ),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minWidth: 100,
-                    minHeight: 30,
-                    maxHeight: 30,
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Wrap(
-                        spacing: 10,
-                        children: const [
-                          Icon(Icons.monitor),
-                          Icon(Icons.videocam),
-                          Icon(MdiIcons.google)
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 18,
-                      ),
-                      const VerticalDivider(
-                        color: davysGray,
-                        thickness: 1,
-                      ),
-                      const SizedBox(
-                        width: 18,
-                      ),
-                      Wrap(
-                        spacing: 10,
-                        children: [
-                          const Icon(
-                            Icons.people_outline_sharp,
-                            size: 30,
-                          ),
-                          Text(
-                            roomCapacity,
-                            style: helveticaText.copyWith(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget inUseWidget() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
         Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          width: 840,
+          height: 167,
+          padding: const EdgeInsets.only(
+            top: 30,
+            left: 40,
+            right: 30,
+            bottom: 22,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: platinum, width: 1),
+            color: white,
+          ),
+          child: Row(
             children: [
-              Text(
-                status,
-                style: arialText.copyWith(
-                  fontSize: 125,
-                  color: orangeAccent,
-                  fontWeight: FontWeight.w900,
-                ),
+              Column(
+                children: [
+                  Text(
+                    '10.00 - 11.30',
+                    style: helveticaText.copyWith(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 13,
+                  ),
+                  TransparentBorderedBlackButton(
+                    text: 'See Schedule',
+                    disabled: false,
+                    onTap: () {},
+                    padding: ButtonSize().mediumSize(),
+                  )
+                ],
               ),
               const SizedBox(
-                height: 10,
+                width: 40,
               ),
-              Text(
-                'By $empName - $empNip',
-                style: helveticaText.copyWith(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: scaffoldBg,
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                summary,
-                style: helveticaText.copyWith(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w300,
-                  color: scaffoldBg,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Ruang Kerja Intern Lexicon Project',
+                      style: helveticaText.copyWith(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: davysGray,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 13,
+                    ),
+                    Text(
+                      'by Edward Evannov',
+                      style: helveticaText.copyWith(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w300,
+                        color: davysGray,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-        ),
-        Column(
-          children: [
-            Text(
-              duration,
-              style: helveticaText.copyWith(
-                fontSize: 72,
-                fontWeight: FontWeight.w700,
-                color: scaffoldBg,
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.resolveWith<Color>((states) {
-                  return orangeAccent.withOpacity(0.8);
-                }),
-                shape:
-                    MaterialStateProperty.resolveWith<OutlinedBorder>((states) {
-                  return RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80),
-                  );
-                }),
-                padding:
-                    MaterialStateProperty.resolveWith<EdgeInsets>((states) {
-                  return const EdgeInsets.symmetric(
-                    horizontal: 50,
-                    vertical: 25,
-                  );
-                }),
-              ),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => CheckInOutNipDialog(
-                    setNip: setNip,
-                    submit: submitCheckIn,
-                    isIn: false,
-                  ),
-                );
-                // setState(() {
-                //   isLoadingChangeStatus = true;
-                // });
-                // print(bookingId);
-                // checkIn(bookingId).then((value) {
-                //   print(value);
-                // }).onError((error, stackTrace) {});
-              },
-              child: Text(
-                'Check Out',
-                style: helveticaText.copyWith(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w700,
-                  color: scaffoldBg,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget availableWidget() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Available',
-              style: arialText.copyWith(
-                fontSize: 120,
-                color: scaffoldBg,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              'Not in use',
-              style: helveticaText.copyWith(
-                fontSize: 32,
-                fontWeight: FontWeight.w300,
-                color: scaffoldBg,
-              ),
-            ),
-          ],
-        ),
-        ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-              return greenAcent.withOpacity(0.8);
-            }),
-            shape: MaterialStateProperty.resolveWith<OutlinedBorder>((states) {
-              return RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(80),
-              );
-            }),
-            padding: MaterialStateProperty.resolveWith<EdgeInsets>((states) {
-              return const EdgeInsets.symmetric(
-                horizontal: 50,
-                vertical: 25,
-              );
-            }),
-          ),
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => BookingPage(
-                  roomId: roomId,
-                  roomName: roomName,
-                  today: DateTime.now(),
-                ),
-              ),
-            );
-          },
-          child: Text(
-            'Book Now',
-            style: helveticaText.copyWith(
-              fontSize: 56,
-              fontWeight: FontWeight.w700,
-              color: scaffoldBg,
-              height: 1.3,
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget waitingWidget() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Waiting',
-              style: arialText.copyWith(
-                fontSize: 125,
-                color: grayx11,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              'Booked by Luthfi Izhariman - 169742',
-              style: helveticaText.copyWith(
-                fontSize: 32,
-                fontWeight: FontWeight.w700,
-                color: scaffoldBg,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              summary,
-              style: helveticaText.copyWith(
-                fontSize: 32,
-                fontWeight: FontWeight.w300,
-                color: scaffoldBg,
-              ),
-            ),
-          ],
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.resolveWith<Color>((states) {
-                  return greenAcent.withOpacity(0.8);
-                }),
-                shape:
-                    MaterialStateProperty.resolveWith<OutlinedBorder>((states) {
-                  return RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80),
-                  );
-                }),
-                padding:
-                    MaterialStateProperty.resolveWith<EdgeInsets>((states) {
-                  return const EdgeInsets.symmetric(
-                    horizontal: 50,
-                    vertical: 25,
-                  );
-                }),
-              ),
-              onPressed: () {
-                // setState(() {
-                //   isLoadingChangeStatus = true;
-                // });
-                print(bookingId);
-                showDialog(
-                  context: context,
-                  builder: (context) => CheckInOutNipDialog(
-                      setNip: setNip, submit: submitCheckIn),
-                );
-                // checkIn(bookingId,nip).then((value) {
-                //   print(value);
-                // }).onError((error, stackTrace) {});
-              },
-              child: Text(
-                'Check In',
-                style: helveticaText.copyWith(
-                  fontSize: 56,
-                  fontWeight: FontWeight.w700,
-                  color: scaffoldBg,
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.resolveWith<Color>((states) {
-                  return grayx11.withOpacity(0.8);
-                }),
-                shape:
-                    MaterialStateProperty.resolveWith<OutlinedBorder>((states) {
-                  return RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80),
-                  );
-                }),
-                padding:
-                    MaterialStateProperty.resolveWith<EdgeInsets>((states) {
-                  return const EdgeInsets.symmetric(
-                    horizontal: 55,
-                    vertical: 15,
-                  );
-                }),
-              ),
-              onPressed: () {},
-              child: Text(
-                'Cancel Booking',
-                style: helveticaText.copyWith(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w700,
-                  color: scaffoldBg,
-                ),
-              ),
-            ),
-          ],
         )
       ],
     );
