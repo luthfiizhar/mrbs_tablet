@@ -7,10 +7,12 @@ class FacilityItemContainer extends StatelessWidget {
     super.key,
     this.unit = 0,
     this.img = "",
+    this.isFood = false,
   });
 
   int unit;
   String img;
+  bool isFood;
 
   @override
   Widget build(BuildContext context) {
@@ -21,19 +23,28 @@ class FacilityItemContainer extends StatelessWidget {
         children: [
           Center(
             child: Container(
-              width: 100,
-              height: 100,
+              width: 110,
+              height: 110,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: white,
+                color: lightGray,
               ),
-              child: Center(
-                child: SizedBox(
-                  height: 75,
-                  width: 75,
-                  child: FittedBox(
-                    fit: BoxFit.contain,
-                    child: Center(child: Image.network(img)),
+              padding: const EdgeInsets.all(1),
+              child: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: white,
+                ),
+                child: Center(
+                  child: Container(
+                    width: isFood ? 50 : 80,
+                    height: isFood ? 50 : 60,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: Image.network(img).image,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
                   ),
                 ),
               ),

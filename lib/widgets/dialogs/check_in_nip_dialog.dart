@@ -77,7 +77,7 @@ class _CheckInOutNipDialogState extends State<CheckInOutNipDialog> {
                   Text(
                     'Confirmation',
                     style: helveticaText.copyWith(
-                      fontSize: 40,
+                      fontSize: 32,
                       fontWeight: FontWeight.w700,
                       color: eerieBlack,
                     ),
@@ -88,7 +88,7 @@ class _CheckInOutNipDialogState extends State<CheckInOutNipDialog> {
                   Text(
                     'Enter your NIP to continue',
                     style: helveticaText.copyWith(
-                      fontSize: 32,
+                      fontSize: 24,
                       fontWeight: FontWeight.w300,
                       color: eerieBlack,
                     ),
@@ -99,7 +99,7 @@ class _CheckInOutNipDialogState extends State<CheckInOutNipDialog> {
                   RegularInputField(
                     controller: _nip,
                     hintText: 'NIP here ...',
-                    fontSize: 32,
+                    fontSize: 24,
                     // textAlign: TextAlign.center,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 25,
@@ -121,7 +121,7 @@ class _CheckInOutNipDialogState extends State<CheckInOutNipDialog> {
                         onTap: () {
                           Navigator.of(context).pop();
                         },
-                        fontSize: 32,
+                        fontSize: 24,
                         padding: ButtonSize().mediumSize(),
                       ),
                       const SizedBox(
@@ -137,7 +137,7 @@ class _CheckInOutNipDialogState extends State<CheckInOutNipDialog> {
                             Navigator.of(context).pop();
                           }
                         },
-                        fontSize: 32,
+                        fontSize: 24,
                         padding: ButtonSize().mediumSize(),
                       )
                     ],

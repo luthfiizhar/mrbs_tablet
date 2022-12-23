@@ -4,11 +4,11 @@ import 'package:mrbs_tablet/constant/text_style.dart';
 
 class ButtonSize {
   EdgeInsetsGeometry longSize() {
-    return const EdgeInsets.symmetric(horizontal: 100, vertical: 20);
+    return const EdgeInsets.symmetric(horizontal: 80, vertical: 20);
   }
 
   EdgeInsetsGeometry mediumSize() {
-    return const EdgeInsets.symmetric(horizontal: 59, vertical: 20);
+    return const EdgeInsets.symmetric(horizontal: 50, vertical: 20);
   }
 
   EdgeInsetsGeometry smallSize() {
@@ -16,7 +16,7 @@ class ButtonSize {
   }
 
   EdgeInsetsGeometry scheduleButton() {
-    return const EdgeInsets.symmetric(horizontal: 32, vertical: 13);
+    return const EdgeInsets.symmetric(horizontal: 59, vertical: 13);
   }
 
   EdgeInsetsGeometry loginButotn() {

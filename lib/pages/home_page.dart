@@ -20,6 +20,7 @@ import 'package:mrbs_tablet/widgets/dialogs/booking_page_input_nip.dart';
 import 'package:mrbs_tablet/widgets/dialogs/check_in_nip_dialog.dart';
 import 'package:mrbs_tablet/widgets/dialogs/initiate_room_dialog.dart';
 import 'package:mrbs_tablet/widgets/dialogs/schedulre.dart';
+import 'package:mrbs_tablet/widgets/schedule_drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -33,6 +34,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   FirebaseDatabase database = FirebaseDatabase.instance;
   DatabaseReference mrbsRef = FirebaseDatabase.instance.ref();
+
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
 
   bool isLoadingChangeStatus = true;
   bool isNextMeetingChange = false;
@@ -48,7 +51,7 @@ class _HomePageState extends State<HomePage> {
 
   String bookingId = "";
 
-  String roomId = "MR-1";
+  String roomId = "MR-22";
 
   String summary = "";
   String empName = "";
@@ -115,7 +118,7 @@ class _HomePageState extends State<HomePage> {
         if (value['Status'] == "200") {
           showDialog(
             context: context,
-            builder: (context) => AlertDialogBlack(
+            builder: (context) => AlertDialogWhite(
               title: value['Title'],
               contentText: value['Message'],
             ),
@@ -126,7 +129,7 @@ class _HomePageState extends State<HomePage> {
           });
           showDialog(
             context: context,
-            builder: (context) => AlertDialogBlack(
+            builder: (context) => AlertDialogWhite(
               title: value['Title'],
               contentText: value['Message'],
               isSuccess: false,
@@ -153,7 +156,7 @@ class _HomePageState extends State<HomePage> {
         if (value['Status'] == "200") {
           showDialog(
             context: context,
-            builder: (context) => AlertDialogBlack(
+            builder: (context) => AlertDialogWhite(
               title: value['Title'],
               contentText: value['Message'],
             ),
@@ -164,7 +167,7 @@ class _HomePageState extends State<HomePage> {
           });
           showDialog(
             context: context,
-            builder: (context) => AlertDialogBlack(
+            builder: (context) => AlertDialogWhite(
               title: value['Title'],
               contentText: value['Message'],
               isSuccess: false,
@@ -290,7 +293,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Consumer<MrbsTabletModel>(builder: (context, model, child) {
       return Scaffold(
+        key: scaffoldKey,
         resizeToAvoidBottomInset: false,
+        endDrawer: ScheduleDrawer(
+          scaffoldKey: scaffoldKey,
+        ),
         body: ConstrainedBox(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height,
@@ -632,10 +639,18 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          const Icon(
-            Icons.settings_outlined,
-            color: eerieBlack,
-            size: 40,
+          InkWell(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => InitiateRoomDialog(),
+              );
+            },
+            child: const Icon(
+              Icons.settings_outlined,
+              color: eerieBlack,
+              size: 40,
+            ),
           )
         ],
       ),
@@ -644,6 +659,9 @@ class _HomePageState extends State<HomePage> {
 
   Widget roomInfo() {
     return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20,
+      ),
       // color: greenAcent,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -665,7 +683,7 @@ class _HomePageState extends State<HomePage> {
           Container(
             padding: const EdgeInsets.symmetric(
               horizontal: 20,
-              vertical: 20,
+              vertical: 10,
             ),
             decoration: BoxDecoration(
               color: white,
@@ -685,9 +703,15 @@ class _HomePageState extends State<HomePage> {
                   Wrap(
                     spacing: 10,
                     children: const [
-                      Icon(Icons.monitor),
-                      Icon(Icons.videocam),
-                      Icon(MdiIcons.google)
+                      ImageIcon(
+                        AssetImage('assets/icons/icon_tv.png'),
+                      ),
+                      ImageIcon(
+                        AssetImage('assets/icons/icon_video_cam.png'),
+                      ),
+                      ImageIcon(
+                        AssetImage('assets/icons/icon_google.png'),
+                      ),
                     ],
                   ),
                   const SizedBox(
@@ -700,18 +724,20 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(
                     width: 18,
                   ),
-                  Wrap(
-                    spacing: 10,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.people_outline_sharp,
-                        size: 30,
+                      const ImageIcon(
+                        AssetImage('assets/icons/icon_group.png'),
+                      ),
+                      const SizedBox(
+                        width: 10,
                       ),
                       Text(
                         roomCapacity,
                         style: helveticaText.copyWith(
                           fontSize: 24,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w700,
                         ),
                       )
                     ],
@@ -980,20 +1006,22 @@ class _HomePageState extends State<HomePage> {
             ),
             InkWell(
               onTap: () {
-                // Navigator.of(context).push(MaterialPageRoute(
-                //   builder: (context) => BookingPage(
-                //     roomId: roomId,
-                //     roomName: roomName,
-                //     today: DateTime.now(),
-                //   ),
-                // ));
-                showDialog(
-                  context: context,
-                  builder: (context) => CheckInOutNipDialog(
-                    setNip: setNip,
-                    submit: () {},
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => BookingPage(
+                      roomId: roomId,
+                      roomName: roomName,
+                      today: DateTime.now(),
+                    ),
                   ),
                 );
+                // showDialog(
+                //   context: context,
+                //   builder: (context) => CheckInOutNipDialog(
+                //     setNip: setNip,
+                //     submit: () {},
+                //   ),
+                // );
               },
               child: Container(
                 width: 350,
@@ -1361,10 +1389,12 @@ class _HomePageState extends State<HomePage> {
                     text: 'See Schedule',
                     disabled: false,
                     onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => ScheduleDialog(),
-                      );
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (context) => ScheduleDialog(),
+                      // );
+                      // Scaffold.of(context).openEndDrawer();
+                      scaffoldKey.currentState!.openEndDrawer();
                     },
                     padding: ButtonSize().scheduleButton(),
                   )
@@ -1376,11 +1406,12 @@ class _HomePageState extends State<HomePage> {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       'Ruang Kerja Intern Lexicon Project',
                       style: helveticaText.copyWith(
-                        fontSize: 28,
+                        fontSize: 24,
                         fontWeight: FontWeight.w700,
                         color: davysGray,
                       ),
@@ -1391,7 +1422,7 @@ class _HomePageState extends State<HomePage> {
                     Text(
                       'by Edward Evannov',
                       style: helveticaText.copyWith(
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.w300,
                         color: davysGray,
                       ),

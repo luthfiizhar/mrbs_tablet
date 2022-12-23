@@ -17,6 +17,7 @@ class RegularInputField extends StatelessWidget {
     this.contentPadding =
         const EdgeInsets.symmetric(horizontal: 15, vertical: 8.5),
     this.fontSize = 22,
+    // this.isMultipleLine = false,
   });
 
   FocusNode? focusNode;
@@ -30,6 +31,7 @@ class RegularInputField extends StatelessWidget {
   TextAlign textAlign;
   EdgeInsets contentPadding;
   double fontSize;
+  // bool isMultipleLine;
 
   @override
   Widget build(BuildContext context) {

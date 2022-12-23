@@ -51,6 +51,7 @@ dependencies:
   dotted_border: ^2.0.0+3
   syncfusion_flutter_calendar: ^20.3.60
   material_design_icons_flutter: ^6.0.7096
+  dropdown_button2: ^1.9.2
 
 dev_dependencies:
   flutter_test:
@@ -80,6 +81,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/
+    - assets/icons/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

@@ -47,7 +47,7 @@ class _CustomDigitalClockState extends State<CustomDigitalClock> {
   }
 
   String _formatDateTime(DateTime dateTime) {
-    return DateFormat('H:mm').format(dateTime);
+    return DateFormat('HH:mm').format(dateTime);
   }
 
   String _formatDay(DateTime dateTime) {

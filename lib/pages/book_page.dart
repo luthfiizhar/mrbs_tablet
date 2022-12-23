@@ -425,6 +425,8 @@ class _BookingPageState extends State<BookingPage> {
               onSave: (newValue) {
                 eventDesc = newValue;
               },
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             ),
           ),
         ),
@@ -598,15 +600,14 @@ class _BookingPageState extends State<BookingPage> {
                       setState(() {});
                     });
                   },
-                  child: DottedBorder(
-                    borderType: BorderType.Circle,
-                    color: eerieBlack,
-                    dashPattern: const [10, 4],
-                    radius: const Radius.circular(50),
-                    child: const SizedBox(
-                      // color: greenAcent,
-                      width: 100,
-                      height: 100,
+                  child: SizedBox(
+                    width: 110,
+                    height: 110,
+                    child: DottedBorder(
+                      borderType: BorderType.Circle,
+                      color: eerieBlack,
+                      dashPattern: const [10, 4],
+                      radius: const Radius.circular(50),
                       child: Center(
                         child: Icon(
                           Icons.add_circle_outline_sharp,
@@ -618,14 +619,22 @@ class _BookingPageState extends State<BookingPage> {
                   ),
                 ),
               ),
+              const SizedBox(
+                width: 20,
+              ),
               ListView.builder(
                 itemCount: listAmenities.length,
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
-                  return FacilityItemContainer(
-                    img: listAmenities[index].photo!,
-                    unit: listAmenities[index].qty!,
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      right: 20,
+                    ),
+                    child: FacilityItemContainer(
+                      img: listAmenities[index].photo!,
+                      unit: listAmenities[index].qty!,
+                    ),
                   );
                 },
               ),
@@ -689,14 +698,23 @@ class _BookingPageState extends State<BookingPage> {
                   ),
                 ),
               ),
+              const SizedBox(
+                width: 20,
+              ),
               ListView.builder(
                 itemCount: listFoods.length,
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
-                  return FacilityItemContainer(
-                    img: listFoods[index].photo!,
-                    unit: listFoods[index].qty!,
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      right: 20,
+                    ),
+                    child: FacilityItemContainer(
+                      img: listFoods[index].photo!,
+                      unit: listFoods[index].qty!,
+                      isFood: true,
+                    ),
                   );
                 },
               ),
@@ -714,13 +732,20 @@ class _BookingPageState extends State<BookingPage> {
       children: [
         SizedBox(
           width: 200,
-          child: Text(
-            label,
-            style: helveticaText.copyWith(
-              fontSize: 22,
-              fontWeight: FontWeight.w400,
-              height: 1.15,
-              color: eerieBlack,
+          child: Padding(
+            padding: isOneLine
+                ? EdgeInsets.zero
+                : const EdgeInsets.only(
+                    top: 10,
+                  ),
+            child: Text(
+              label,
+              style: helveticaText.copyWith(
+                fontSize: 22,
+                fontWeight: FontWeight.w400,
+                height: 1.15,
+                color: eerieBlack,
+              ),
             ),
           ),
         ),

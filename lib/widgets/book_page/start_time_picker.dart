@@ -190,56 +190,59 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          height: 300,
-                          width: 80,
-                          decoration: BoxDecoration(
-                            color: white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.all(15),
-                          child: ScrollConfiguration(
-                            behavior: ScrollConfiguration.of(context)
-                                .copyWith(scrollbars: false),
-                            child: ListView.builder(
-                              itemCount: timeList.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                return Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  // mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    index == 0 || index == timeList.length
-                                        ? const SizedBox()
-                                        : const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: 10,
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            height: 300,
+                            width: 80,
+                            decoration: BoxDecoration(
+                              color: white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.all(15),
+                            child: ScrollConfiguration(
+                              behavior: ScrollConfiguration.of(context)
+                                  .copyWith(scrollbars: false),
+                              child: ListView.builder(
+                                itemCount: timeList.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    // mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      index == 0 || index == timeList.length
+                                          ? const SizedBox()
+                                          : const Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: 10,
+                                              ),
+                                              child: Divider(
+                                                color: davysGray,
+                                              ),
                                             ),
-                                            child: Divider(
-                                              color: davysGray,
-                                            ),
+                                      InkWell(
+                                        onTap: () {
+                                          // widget.selectedTime = timeList[index];
+                                          widget.setStartTime!(timeList[index]);
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text(
+                                          timeList[index],
+                                          style: const TextStyle(
+                                            color: davysGray,
+                                            fontSize: 16,
+                                            height: 1.3,
+                                            fontWeight: FontWeight.w300,
                                           ),
-                                    InkWell(
-                                      onTap: () {
-                                        // widget.selectedTime = timeList[index];
-                                        widget.setStartTime!(timeList[index]);
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text(
-                                        timeList[index],
-                                        style: const TextStyle(
-                                          color: davysGray,
-                                          fontSize: 16,
-                                          height: 1.3,
-                                          fontWeight: FontWeight.w300,
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                );
-                              },
+                                    ],
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),
@@ -274,7 +277,7 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
                                 ),
                               ),
                               const SizedBox(
-                                height: 5,
+                                height: 15,
                               ),
                               Text(
                                 '${Provider.of<MrbsTabletModel>(context).roomAlias}',
@@ -286,19 +289,19 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
                                 ),
                               ),
                               const SizedBox(
-                                height: 5,
+                                height: 15,
                               ),
                               Text(
                                 today,
                                 style: const TextStyle(
                                   fontFamily: 'Helvetica',
-                                  fontSize: 14,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.w300,
                                   color: davysGray,
                                 ),
                               ),
                               const SizedBox(
-                                height: 10,
+                                height: 20,
                               ),
                               Expanded(
                                 child: Container(
@@ -323,29 +326,30 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
                                     },
                                     appointmentBuilder: appointmentBuilder,
                                     view: CalendarView.day,
-                                    initialDisplayDate: widget.selectedDate,
+                                    initialDisplayDate: DateTime.now(),
                                     dataSource: events,
-                                    timeSlotViewSettings:
-                                        const TimeSlotViewSettings(
+                                    timeSlotViewSettings: TimeSlotViewSettings(
                                       timeFormat: 'H:mm',
                                       startHour: 5,
                                       endHour: 20,
-                                      timeIntervalHeight: -1,
-                                      timeTextStyle: TextStyle(
-                                        fontFamily: 'Helvetica',
+                                      timeInterval: Duration(
+                                        hours: 1,
+                                      ),
+                                      timeIntervalHeight: 50,
+                                      timeTextStyle: helveticaText.copyWith(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w300,
                                         color: davysGray,
                                       ),
                                     ),
                                     headerDateFormat: 'yMMMMd',
-                                    todayHighlightColor: eerieBlack,
+                                    todayHighlightColor: orangeAccent,
                                     viewNavigationMode: ViewNavigationMode.none,
                                     headerHeight: 0,
                                     viewHeaderHeight: 0,
                                   ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
