@@ -126,3 +126,36 @@ Future bookingRoom(Booking booking) async {
     return e;
   }
 }
+
+Future getRoomList() async {
+  var url = Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet/room-list');
+  Map<String, String> requestHeader = {
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.get(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future getTabletSchedule(String roomId) async {
+  var url =
+      Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet/schedule/$roomId');
+  Map<String, String> requestHeader = {
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.get(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}

@@ -8,10 +8,8 @@ class RoomEventDataSource extends CalendarDataSource {
   //   appointments = source;
   //   resources = resourceColl;
   // }
-  RoomEventDataSource(
-      List<RoomEvent> source, List<CalendarResource> resourceColl) {
+  RoomEventDataSource(List<RoomEvent> source) {
     appointments = source;
-    resources = resourceColl;
   }
 
   @override
@@ -25,34 +23,29 @@ class RoomEventDataSource extends CalendarDataSource {
   }
 
   @override
-  bool isAllDay(int index) {
-    return appointments![index].isAllDay;
-  }
-
-  @override
   String getSubject(int index) {
     return appointments![index].eventName;
   }
 
-  @override
-  String getStartTimeZone(int index) {
-    return appointments![index].startTimeZone;
-  }
+  // @override
+  // String getStartTimeZone(int index) {
+  //   return appointments![index].startTimeZone;
+  // }
 
-  @override
-  String getEndTimeZone(int index) {
-    return appointments![index].endTimeZone;
-  }
+  // @override
+  // String getEndTimeZone(int index) {
+  //   return appointments![index].endTimeZone;
+  // }
 
-  @override
-  Color getColor(int index) {
-    return appointments![index].background;
-  }
+  // @override
+  // Color getColor(int index) {
+  //   return appointments![index].background;
+  // }
 
-  @override
-  List<Object> getResourceIds(int index) {
-    return appointments![index].resourceIds;
-  }
+  // @override
+  // List<Object> getResourceIds(int index) {
+  //   return appointments![index].resourceIds;
+  // }
 
   // @override
   // String getRecurrenceRule(int index) {

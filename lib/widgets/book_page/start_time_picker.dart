@@ -1,10 +1,13 @@
 import "package:flutter/material.dart";
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:mrbs_tablet/api_request.dart';
 import 'package:mrbs_tablet/constant/color.dart';
 import 'package:mrbs_tablet/constant/text_style.dart';
 import 'package:mrbs_tablet/model/model.dart';
 import 'package:mrbs_tablet/model/room_event_class.dart';
 import 'package:mrbs_tablet/model/room_event_data_source.dart';
+import 'package:mrbs_tablet/widgets/book_page/calendar_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -27,6 +30,7 @@ class PickStartTimeDialog extends StatefulWidget {
 }
 
 class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
+  String roomId = "";
   CalendarController _calendar = CalendarController();
 
   String today = "";
@@ -45,8 +49,7 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
   List contoh = ['1', '2', '3', '4', '5', '6', '7', '8'];
   int indexWarna = 0;
 
-  RoomEventDataSource? events =
-      RoomEventDataSource(<RoomEvent>[], <CalendarResource>[]);
+  RoomEventDataSource? events = RoomEventDataSource(<RoomEvent>[]);
 
   Iterable<String> getTimes(
       TimeOfDay startTime, TimeOfDay endTime, Duration step) sync* {
@@ -130,21 +133,51 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
           from: start,
           background: colors[indexWarna],
           capacity: 6,
-          contactID: 'haha',
-          endTimeZone: '',
           eventName: 'meeting ${i + 1}',
-          isAllDay: false,
-          organizer: 'nip ${i + 1}',
-          recurrenceRule: '',
-          resourceIds: [''],
-          startTimeZone: '',
           isDark: isDark,
         ),
       );
       indexWarna++;
       jam = jam + 2;
     }
-    ;
+  }
+
+  setDataToCalendar(dynamic result) {
+    setState(() {
+      int i = 0;
+      for (var element in result) {
+        print('loop');
+        if (i % 7 == 0) {
+          indexWarna = 0;
+        }
+        if (indexWarna > 3) {
+          isDark = false;
+        }
+        events!.appointments!.add(
+          RoomEvent(
+            from: DateTime.parse(element['StartDateTime']),
+            to: DateTime.parse(element['EndDateTime']),
+            background: colors[indexWarna],
+            isDark: isDark,
+            bookingID: element['BookingID'],
+            eventName: element['Summary'],
+          ),
+        );
+        i++;
+        indexWarna++;
+      }
+
+      print(events!.appointments!.toString());
+    });
+  }
+
+  Future getRoomData() async {
+    var box = await Hive.openBox('RoomInfo');
+    var room = box.get('roomId');
+    // box.put('roomName', name);
+    setState(() {
+      roomId = room;
+    });
   }
 
   @override
@@ -153,8 +186,16 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
     super.initState();
     var todayDateTime = DateTime.now();
     today = DateFormat('EEEE, d MMMM y').format(todayDateTime);
-    addAppointmen();
+
     setStartTime();
+    getRoomData().then((value) {
+      getTabletSchedule(roomId).then((value) async {
+        dynamic result = value['Data'];
+        await setDataToCalendar(result);
+        events!.notifyListeners(
+            CalendarDataSourceAction.reset, events!.appointments!);
+      });
+    });
   }
 
   @override
@@ -252,107 +293,7 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
                       ),
                       GestureDetector(
                         onTap: () {},
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                            left: 25,
-                            right: 25,
-                            top: 20,
-                            bottom: 20,
-                          ),
-                          height: 800,
-                          width: 510,
-                          decoration: BoxDecoration(
-                            color: white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${Provider.of<MrbsTabletModel>(context).roomType}',
-                                style: helveticaText.copyWith(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w300,
-                                  color: davysGray,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Text(
-                                '${Provider.of<MrbsTabletModel>(context).roomAlias}',
-                                style: const TextStyle(
-                                  fontFamily: 'Helvetica',
-                                  fontSize: 48,
-                                  fontWeight: FontWeight.w700,
-                                  color: eerieBlack,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Text(
-                                today,
-                                style: const TextStyle(
-                                  fontFamily: 'Helvetica',
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w300,
-                                  color: davysGray,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  // color: Colors.blue,
-                                  height: 380,
-                                  child: SfCalendar(
-                                    controller: _calendar,
-                                    onTap: (calendarTapDetails) {
-                                      if (calendarTapDetails.targetElement ==
-                                          CalendarElement.calendarCell) {
-                                        // print(calendarTapDetails.date);
-                                        // var hour = calendarTapDetails.date!.hour
-                                        //     .toString()
-                                        //     .padLeft(2, '0');
-                                        // var minute = calendarTapDetails.date!.minute
-                                        //     .toString()
-                                        //     .padLeft(2, '0');
-                                        // var startTime = "$hour:$minute";
-                                        // widget.setStartTime!(startTime);
-                                        // Navigator.pop(context);
-                                      }
-                                    },
-                                    appointmentBuilder: appointmentBuilder,
-                                    view: CalendarView.day,
-                                    initialDisplayDate: DateTime.now(),
-                                    dataSource: events,
-                                    timeSlotViewSettings: TimeSlotViewSettings(
-                                      timeFormat: 'H:mm',
-                                      startHour: 5,
-                                      endHour: 20,
-                                      timeInterval: Duration(
-                                        hours: 1,
-                                      ),
-                                      timeIntervalHeight: 50,
-                                      timeTextStyle: helveticaText.copyWith(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w300,
-                                        color: davysGray,
-                                      ),
-                                    ),
-                                    headerDateFormat: 'yMMMMd',
-                                    todayHighlightColor: orangeAccent,
-                                    viewNavigationMode: ViewNavigationMode.none,
-                                    headerHeight: 0,
-                                    viewHeaderHeight: 0,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        child: CalendarDialog(),
                       ),
                     ],
                   ),

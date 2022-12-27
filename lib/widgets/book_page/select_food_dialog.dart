@@ -44,12 +44,17 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
     return Dialog(
       elevation: 0,
       // shape: OutlinedBorder,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(
+          15,
+        ),
+      ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(
           maxHeight: 500,
           minHeight: 300,
           minWidth: 370,
-          maxWidth: 370,
+          maxWidth: 500,
         ),
         child: Container(
           // width: 450,
@@ -59,7 +64,7 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
           ),
           decoration: BoxDecoration(
             color: culturedWhite,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
           child: Container(
             // color: Colors.green,
@@ -182,14 +187,14 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
                     },
                   ),
                   const SizedBox(
-                    height: 25,
+                    height: 35,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       RegularButton(
                         text: 'Confirm',
-                        fontSize: 24,
+                        fontSize: 20,
                         disabled: false,
                         onTap: () {
                           selectedFood = foodAmen
@@ -199,7 +204,10 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
                           widget.setListFood!(selectedFood, foodAmen);
                           Navigator.of(context).pop();
                         },
-                        padding: ButtonSize().mediumSize(),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 50,
+                          vertical: 15,
+                        ),
                       )
                     ],
                   )

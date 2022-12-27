@@ -32,8 +32,7 @@ class _ScheduleDialogState extends State<ScheduleDialog> {
   List contoh = ['1', '2', '3', '4', '5', '6', '7', '8'];
   int indexWarna = 0;
 
-  RoomEventDataSource? events =
-      RoomEventDataSource(<RoomEvent>[], <CalendarResource>[]);
+  RoomEventDataSource? events = RoomEventDataSource(<RoomEvent>[]);
 
   @override
   void initState() {

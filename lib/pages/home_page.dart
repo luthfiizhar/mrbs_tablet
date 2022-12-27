@@ -46,6 +46,7 @@ class _HomePageState extends State<HomePage> {
   String nip = "";
 
   String roomName = "";
+  String roomAlias = "";
   String roomType = "";
   String roomCapacity = "";
 
@@ -57,7 +58,12 @@ class _HomePageState extends State<HomePage> {
   String empName = "";
   String empNip = "";
   String duration = "";
-  String nextMeeting = "";
+  String nextMeetingSummary = "";
+  String nextMeetingBookingID = "";
+  String nextMeetingDuration = "";
+  String nextMeetingEmpName = "";
+  String nextMeetingEmpNip = "";
+  String nextMeetingRoomId = "";
 
   Future getData() async {
     DatabaseEvent event =
@@ -103,6 +109,15 @@ class _HomePageState extends State<HomePage> {
     var box = await Hive.openBox('room');
     box.put('roomId', id);
     box.put('roomName', name);
+  }
+
+  Future getRoomData() async {
+    var box = await Hive.openBox('RoomInfo');
+    var room = box.get('roomId');
+    // box.put('roomName', name);
+    setState(() {
+      roomId = room;
+    });
   }
 
   submitCheckIn() {
@@ -225,7 +240,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       var detail = Room.fromJson(Map<String, dynamic>.from(data as dynamic));
 
-      Provider.of<MrbsTabletModel>(context, listen: false).setRoom(detail);
+      // Provider.of<MrbsTabletModel>(context, listen: false).setRoom(detail);
       status = detail.status!;
       bookingId = detail.bookingId!;
       summary = detail.summary!;
@@ -240,34 +255,44 @@ class _HomePageState extends State<HomePage> {
   void nextMeetingListener(Object data) {
     setState(() {
       print(data);
-      nextMeeting = data.toString();
+      var detail = Room.fromJson(Map<String, dynamic>.from(data as dynamic));
+      summary = detail.summary!;
+      bookingId = detail.bookingId!;
+      duration = detail.duration!;
+      empName = detail.empName!;
+      roomId = detail.roomId!;
     });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
-    Wakelock.toggle(enable: true);
-
-    today = DateFormat('yyyy-M-dd').format(DateTime.now());
     super.initState();
-    mrbsRef.child('$roomId/StatusRoom').onValue.listen((event) {
-      statusListener(event.snapshot.value!);
-    });
-    mrbsRef.child('$roomId/NextMeeting').onValue.listen((event) {
-      nextMeetingListener(event.snapshot.value!);
-    });
-    getDetailRoom(roomId).then((value) async {
-      setState(() {
-        Provider.of<MrbsTabletModel>(context, listen: false).setRoomName(
-            value['Data']['RoomName'],
-            value['Data']['RoomAlias'] ?? "TEST AUDI",
-            value['Data']['RoomTypeName']);
-        roomName = value['Data']['RoomAlias'] ?? "TEST AUDI";
-        roomType = value['Data']['RoomTypeName'];
-        roomCapacity = value['Data']['MaxCapacity'].toString();
+    Wakelock.toggle(enable: true);
+    getRoomData().then((value) {
+      today = DateFormat('yyyy-M-dd').format(DateTime.now());
+      mrbsRef.child('$roomId/StatusRoom').onValue.listen((event) {
+        statusListener(event.snapshot.value!);
+      });
+      mrbsRef.child('$roomId/NextMeeting').onValue.listen((event) {
+        nextMeetingListener(event.snapshot.value!);
+      });
+      getDetailRoom(roomId).then((value) async {
+        setState(() {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            // auth = Provider.of<Auth>(context, listen: false);
+            Provider.of<MrbsTabletModel>(context, listen: false).setRoomName(
+                value['Data']['RoomName'],
+                value['Data']['RoomAlias'] ?? "TEST AUDI",
+                value['Data']['RoomTypeName']);
+          });
+
+          roomName = value['Data']['RoomAlias'] ?? "TEST AUDI";
+          roomType = value['Data']['RoomTypeName'];
+          roomCapacity = value['Data']['MaxCapacity'].toString();
+        });
       });
     });
+
     // getData();
     // mrbsRef
     //     .child('MR-1')
@@ -297,6 +322,7 @@ class _HomePageState extends State<HomePage> {
         resizeToAvoidBottomInset: false,
         endDrawer: ScheduleDrawer(
           scaffoldKey: scaffoldKey,
+          roomId: roomId,
         ),
         body: ConstrainedBox(
           constraints: BoxConstraints(
@@ -846,7 +872,7 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '10.00-11.30',
+                    "",
                     style: helveticaText.copyWith(
                       fontSize: 36,
                       fontWeight: FontWeight.w300,
@@ -862,7 +888,7 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          'Ruang kerja intern Lexicon Project',
+                          nextMeetingSummary,
                           style: helveticaText.copyWith(
                             fontSize: 32,
                             fontWeight: FontWeight.w700,
@@ -873,7 +899,7 @@ class _HomePageState extends State<HomePage> {
                           height: 15,
                         ),
                         Text(
-                          'by Edward Evannov',
+                          'by $nextMeetingEmpName',
                           style: helveticaText.copyWith(
                             fontSize: 24,
                             fontWeight: FontWeight.w300,
@@ -941,6 +967,7 @@ class _HomePageState extends State<HomePage> {
                   builder: (context) => CheckInOutNipDialog(
                     setNip: setNip,
                     submit: submitCheckOut,
+                    isIn: false,
                   ),
                 );
               },
@@ -1375,7 +1402,7 @@ class _HomePageState extends State<HomePage> {
               Column(
                 children: [
                   Text(
-                    '10.00 - 11.30',
+                    duration,
                     style: helveticaText.copyWith(
                       fontSize: 40,
                       fontWeight: FontWeight.w300,
@@ -1409,7 +1436,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Ruang Kerja Intern Lexicon Project',
+                      summary,
                       style: helveticaText.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
@@ -1420,7 +1447,7 @@ class _HomePageState extends State<HomePage> {
                       height: 13,
                     ),
                     Text(
-                      'by Edward Evannov',
+                      'by $empName',
                       style: helveticaText.copyWith(
                         fontSize: 20,
                         fontWeight: FontWeight.w300,

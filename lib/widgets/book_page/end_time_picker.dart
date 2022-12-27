@@ -5,6 +5,7 @@ import 'package:mrbs_tablet/constant/text_style.dart';
 import 'package:mrbs_tablet/model/model.dart';
 import 'package:mrbs_tablet/model/room_event_class.dart';
 import 'package:mrbs_tablet/model/room_event_data_source.dart';
+import 'package:mrbs_tablet/widgets/book_page/calendar_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -45,8 +46,7 @@ class _PickEndTimeDialogState extends State<PickEndTimeDialog> {
   List contoh = ['1', '2', '3', '4', '5', '6', '7', '8'];
   int indexWarna = 0;
 
-  RoomEventDataSource? events =
-      RoomEventDataSource(<RoomEvent>[], <CalendarResource>[]);
+  RoomEventDataSource? events = RoomEventDataSource(<RoomEvent>[]);
 
   Iterable<String> getTimes(
       TimeOfDay startTime, TimeOfDay endTime, Duration step) sync* {
@@ -124,14 +124,7 @@ class _PickEndTimeDialogState extends State<PickEndTimeDialog> {
           from: start,
           background: colors[indexWarna],
           capacity: 6,
-          contactID: 'haha',
-          endTimeZone: '',
           eventName: 'meeting ${i + 1}',
-          isAllDay: false,
-          organizer: 'nip ${i + 1}',
-          recurrenceRule: '',
-          resourceIds: [''],
-          startTimeZone: '',
           isDark: isDark,
         ),
       );
@@ -272,107 +265,108 @@ class _PickEndTimeDialogState extends State<PickEndTimeDialog> {
                       ),
                       GestureDetector(
                         onTap: () {},
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                            left: 25,
-                            right: 25,
-                            top: 20,
-                            bottom: 20,
-                          ),
-                          height: 800,
-                          width: 510,
-                          decoration: BoxDecoration(
-                            color: white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${Provider.of<MrbsTabletModel>(context).roomType}',
-                                style: helveticaText.copyWith(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w300,
-                                  color: davysGray,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Text(
-                                '${Provider.of<MrbsTabletModel>(context).roomAlias}',
-                                style: const TextStyle(
-                                  fontFamily: 'Helvetica',
-                                  fontSize: 48,
-                                  fontWeight: FontWeight.w700,
-                                  color: eerieBlack,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Text(
-                                today,
-                                style: const TextStyle(
-                                  fontFamily: 'Helvetica',
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w300,
-                                  color: davysGray,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  // color: Colors.blue,
-                                  height: 380,
-                                  child: SfCalendar(
-                                    controller: _calendar,
-                                    onTap: (calendarTapDetails) {
-                                      if (calendarTapDetails.targetElement ==
-                                          CalendarElement.calendarCell) {
-                                        // print(calendarTapDetails.date);
-                                        // var hour = calendarTapDetails.date!.hour
-                                        //     .toString()
-                                        //     .padLeft(2, '0');
-                                        // var minute = calendarTapDetails.date!.minute
-                                        //     .toString()
-                                        //     .padLeft(2, '0');
-                                        // var startTime = "$hour:$minute";
-                                        // widget.setStartTime!(startTime);
-                                        // Navigator.pop(context);
-                                      }
-                                    },
-                                    appointmentBuilder: appointmentBuilder,
-                                    view: CalendarView.day,
-                                    initialDisplayDate: DateTime.now(),
-                                    dataSource: events,
-                                    timeSlotViewSettings: TimeSlotViewSettings(
-                                      timeFormat: 'H:mm',
-                                      startHour: 5,
-                                      endHour: 20,
-                                      timeInterval: Duration(
-                                        hours: 1,
-                                      ),
-                                      timeIntervalHeight: 50,
-                                      timeTextStyle: helveticaText.copyWith(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w300,
-                                        color: davysGray,
-                                      ),
-                                    ),
-                                    headerDateFormat: 'yMMMMd',
-                                    todayHighlightColor: orangeAccent,
-                                    viewNavigationMode: ViewNavigationMode.none,
-                                    headerHeight: 0,
-                                    viewHeaderHeight: 0,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        child: CalendarDialog(),
+                        // child: Container(
+                        //   padding: const EdgeInsets.only(
+                        //     left: 25,
+                        //     right: 25,
+                        //     top: 20,
+                        //     bottom: 20,
+                        //   ),
+                        //   height: 800,
+                        //   width: 510,
+                        //   decoration: BoxDecoration(
+                        //     color: white,
+                        //     borderRadius: BorderRadius.circular(10),
+                        //   ),
+                        //   child: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       Text(
+                        //         '${Provider.of<MrbsTabletModel>(context).roomType}',
+                        //         style: helveticaText.copyWith(
+                        //           fontSize: 24,
+                        //           fontWeight: FontWeight.w300,
+                        //           color: davysGray,
+                        //         ),
+                        //       ),
+                        //       const SizedBox(
+                        //         height: 15,
+                        //       ),
+                        //       Text(
+                        //         '${Provider.of<MrbsTabletModel>(context).roomAlias}',
+                        //         style: const TextStyle(
+                        //           fontFamily: 'Helvetica',
+                        //           fontSize: 48,
+                        //           fontWeight: FontWeight.w700,
+                        //           color: eerieBlack,
+                        //         ),
+                        //       ),
+                        //       const SizedBox(
+                        //         height: 15,
+                        //       ),
+                        //       Text(
+                        //         today,
+                        //         style: const TextStyle(
+                        //           fontFamily: 'Helvetica',
+                        //           fontSize: 22,
+                        //           fontWeight: FontWeight.w300,
+                        //           color: davysGray,
+                        //         ),
+                        //       ),
+                        //       const SizedBox(
+                        //         height: 20,
+                        //       ),
+                        //       Expanded(
+                        //         child: Container(
+                        //           // color: Colors.blue,
+                        //           height: 380,
+                        //           child: SfCalendar(
+                        //             controller: _calendar,
+                        //             onTap: (calendarTapDetails) {
+                        //               if (calendarTapDetails.targetElement ==
+                        //                   CalendarElement.calendarCell) {
+                        //                 // print(calendarTapDetails.date);
+                        //                 // var hour = calendarTapDetails.date!.hour
+                        //                 //     .toString()
+                        //                 //     .padLeft(2, '0');
+                        //                 // var minute = calendarTapDetails.date!.minute
+                        //                 //     .toString()
+                        //                 //     .padLeft(2, '0');
+                        //                 // var startTime = "$hour:$minute";
+                        //                 // widget.setStartTime!(startTime);
+                        //                 // Navigator.pop(context);
+                        //               }
+                        //             },
+                        //             appointmentBuilder: appointmentBuilder,
+                        //             view: CalendarView.day,
+                        //             initialDisplayDate: DateTime.now(),
+                        //             dataSource: events,
+                        //             timeSlotViewSettings: TimeSlotViewSettings(
+                        //               timeFormat: 'H:mm',
+                        //               startHour: 5,
+                        //               endHour: 20,
+                        //               timeInterval: Duration(
+                        //                 hours: 1,
+                        //               ),
+                        //               timeIntervalHeight: 50,
+                        //               timeTextStyle: helveticaText.copyWith(
+                        //                 fontSize: 14,
+                        //                 fontWeight: FontWeight.w300,
+                        //                 color: davysGray,
+                        //               ),
+                        //             ),
+                        //             headerDateFormat: 'yMMMMd',
+                        //             todayHighlightColor: orangeAccent,
+                        //             viewNavigationMode: ViewNavigationMode.none,
+                        //             headerHeight: 0,
+                        //             viewHeaderHeight: 0,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                       ),
                     ],
                   ),

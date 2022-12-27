@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:hive/hive.dart';
+import 'package:mrbs_tablet/api_request.dart';
 import 'package:mrbs_tablet/constant/color.dart';
 import 'package:mrbs_tablet/constant/text_style.dart';
 import 'package:mrbs_tablet/model/model.dart';
@@ -23,36 +26,22 @@ class _InitiateRoomDialogState extends State<InitiateRoomDialog> {
 
   FocusNode roomNode = FocusNode();
 
-  String nip = "";
+  String roomId = "";
+  String roomName = "";
+  String roomAlias = "";
 
-  List roomList = [
-    {
-      'RoomID': 'MR-1',
-      'RoomName': '101',
-      'RoomAlias': 'Room 101',
-    },
-    {
-      'RoomID': 'MR-2',
-      'RoomName': '102',
-      'RoomAlias': 'Room 102',
-    },
-    {
-      'RoomID': 'MR-3',
-      'RoomName': '103',
-      'RoomAlias': 'Room 103',
-    },
-    {
-      'RoomID': 'MR-4',
-      'RoomName': '104',
-      'RoomAlias': 'Room 104',
-    },
-  ];
+  List roomList = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(Provider.of<MrbsTabletModel>(context, listen: false).roomId);
+    getRoomList().then((value) {
+      print(value);
+      setState(() {
+        roomList = value['Data'];
+      });
+    });
   }
 
   List<DropdownMenuItem<dynamic>> addDividerItem(List items) {
@@ -176,7 +165,9 @@ class _InitiateRoomDialogState extends State<InitiateRoomDialog> {
                     items: addDividerItem(roomList),
                     customHeights: _getCustomItemsHeights(roomList),
                     enabled: true,
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      roomId = value;
+                    },
                     hintText: 'Choose Room',
                     suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp),
                     fontSize: 24,
@@ -216,6 +207,12 @@ class _InitiateRoomDialogState extends State<InitiateRoomDialog> {
                             formKey.currentState!.save();
                             // await widget.setNip!(nip, widget.isIn);
                             // Navigator.of(context).pop();
+                            var box = await Hive.openBox('RoomInfo');
+                            box.put('roomName', roomName);
+                            box.put('roomId', roomId);
+                            box.put('roomAlias', roomAlias);
+
+                            Phoenix.rebirth(context);
                           }
                         },
                         fontSize: 24,

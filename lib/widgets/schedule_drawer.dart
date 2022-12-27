@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
+import 'package:mrbs_tablet/api_request.dart';
 import 'package:mrbs_tablet/constant/color.dart';
 import 'package:mrbs_tablet/constant/text_style.dart';
 import 'package:mrbs_tablet/model/model.dart';
@@ -9,12 +11,14 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class ScheduleDrawer extends StatefulWidget {
-  const ScheduleDrawer({
+  ScheduleDrawer({
     super.key,
     this.scaffoldKey,
+    this.roomId = "",
   });
 
   final GlobalKey<ScaffoldState>? scaffoldKey;
+  String roomId;
 
   @override
   State<ScheduleDrawer> createState() => _ScheduleDrawerState();
@@ -36,9 +40,38 @@ class _ScheduleDrawerState extends State<ScheduleDrawer> {
 
   List contoh = ['1', '2', '3', '4', '5', '6', '7', '8'];
   int indexWarna = 0;
+  bool isDark = true;
 
-  RoomEventDataSource? events =
-      RoomEventDataSource(<RoomEvent>[], <CalendarResource>[]);
+  RoomEventDataSource? events = RoomEventDataSource(<RoomEvent>[]);
+
+  setDataToCalendar(dynamic result) {
+    setState(() {
+      int i = 0;
+      for (var element in result) {
+        print('loop');
+        if (i % 7 == 0) {
+          indexWarna = 0;
+        }
+        if (indexWarna > 3) {
+          isDark = false;
+        }
+        events!.appointments!.add(
+          RoomEvent(
+            from: DateTime.parse(element['StartDateTime']),
+            to: DateTime.parse(element['EndDateTime']),
+            background: colors[indexWarna],
+            isDark: isDark,
+            bookingID: element['BookingID'],
+            eventName: element['Summary'],
+          ),
+        );
+        i++;
+        indexWarna++;
+      }
+
+      print(events!.appointments!.toString());
+    });
+  }
 
   @override
   void initState() {
@@ -46,6 +79,17 @@ class _ScheduleDrawerState extends State<ScheduleDrawer> {
     super.initState();
     var todayDateTime = DateTime.now();
     today = DateFormat('EEEE, d MMMM y').format(todayDateTime);
+
+    getTabletSchedule(widget.roomId).then((value) async {
+      print(value);
+      dynamic result = value['Data'];
+      await setDataToCalendar(result);
+      events!.notifyListeners(
+          CalendarDataSourceAction.reset, events!.appointments!);
+      // SchedulerBinding.instance.addPostFrameCallback((duration) {
+      //   setState(() {});
+      // });
+    });
   }
 
   @override
@@ -115,18 +159,7 @@ class _ScheduleDrawerState extends State<ScheduleDrawer> {
                       controller: _calendar,
                       onTap: (calendarTapDetails) {
                         if (calendarTapDetails.targetElement ==
-                            CalendarElement.calendarCell) {
-                          // print(calendarTapDetails.date);
-                          // var hour = calendarTapDetails.date!.hour
-                          //     .toString()
-                          //     .padLeft(2, '0');
-                          // var minute = calendarTapDetails.date!.minute
-                          //     .toString()
-                          //     .padLeft(2, '0');
-                          // var startTime = "$hour:$minute";
-                          // widget.setStartTime!(startTime);
-                          // Navigator.pop(context);
-                        }
+                            CalendarElement.calendarCell) {}
                       },
                       appointmentBuilder: appointmentBuilder,
                       view: CalendarView.day,
@@ -134,12 +167,12 @@ class _ScheduleDrawerState extends State<ScheduleDrawer> {
                       dataSource: events,
                       timeSlotViewSettings: TimeSlotViewSettings(
                         timeFormat: 'H:mm',
-                        startHour: 5,
-                        endHour: 20,
-                        timeInterval: Duration(
-                          hours: 1,
+                        startHour: 5.5,
+                        endHour: 19.5,
+                        timeInterval: const Duration(
+                          minutes: 30,
                         ),
-                        timeIntervalHeight: 50,
+                        timeIntervalHeight: 100,
                         timeTextStyle: helveticaText.copyWith(
                           fontSize: 14,
                           fontWeight: FontWeight.w300,
@@ -179,18 +212,18 @@ class _ScheduleDrawerState extends State<ScheduleDrawer> {
     final RoomEvent appointment = calendarAppointmentDetails.appointments.first;
 
     return Align(
-      alignment: Alignment.centerRight,
+      alignment: Alignment.centerLeft,
       child: Container(
         padding: const EdgeInsets.all(10),
         height: double.infinity,
-        width: 175,
+        width: double.infinity,
         decoration: BoxDecoration(
           color: appointment.background,
           borderRadius: BorderRadius.circular(5),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               appointment.eventName!,

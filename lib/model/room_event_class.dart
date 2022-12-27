@@ -1,40 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:mrbs_tablet/constant/color.dart';
 
 class RoomEvent {
   RoomEvent({
-    this.eventName,
-    this.organizer,
-    this.contactID,
-    this.capacity,
+    this.eventName = "",
+    this.capacity = 0,
     this.from,
     this.to,
-    this.background,
-    this.isAllDay,
-    this.startTimeZone,
-    this.endTimeZone,
-    this.recurrenceRule,
-    this.resourceIds,
+    this.background = eerieBlack,
     this.isDark = true,
-    this.bookingID,
+    this.bookingID = "",
   });
 
   String? eventName;
-  String? organizer;
-  String? contactID;
   int? capacity;
   DateTime? from;
   DateTime? to;
   Color? background;
-  bool? isAllDay;
-  String? startTimeZone;
-  String? endTimeZone;
-  String? recurrenceRule;
-  List<String>? resourceIds;
   bool isDark;
   String? bookingID;
 
   @override
   String toString() {
-    return "eventName: $eventName, organizer: $organizer, contactID : $contactID, capacity: $capacity, from: ${from.toString()}, to: ${to.toString()} ";
+    return "eventName: $eventName, capacity: $capacity, from: ${from.toString()}, to: ${to.toString()}, color: ${background.toString()} ";
   }
 }

@@ -23,11 +23,13 @@ class BookingPage extends StatefulWidget {
     super.key,
     required this.roomId,
     required this.roomName,
+    this.roomAlias,
     this.today,
   });
 
   final String roomName;
   final String roomId;
+  final String? roomAlias;
   DateTime? today;
 
   @override
@@ -102,7 +104,7 @@ class _BookingPageState extends State<BookingPage> {
     getDetailRoomWithAmenities(widget.roomId).then((value) {
       print(value);
       setState(() {
-        roomName = value['Data']['RoomName'];
+        roomName = value['Data']['RoomAlias'];
         resultAmenities = value['Data']['Amenities'];
         for (var element in resultAmenities) {
           if (element['Default'] > 0) {
@@ -267,7 +269,7 @@ class _BookingPageState extends State<BookingPage> {
                                   MaterialStateProperty.resolveWith<TextStyle>(
                                       (states) {
                                 return helveticaText.copyWith(
-                                  fontSize: 42,
+                                  fontSize: 36,
                                   fontWeight: FontWeight.w700,
                                   color: scaffoldBg,
                                 );
@@ -277,7 +279,7 @@ class _BookingPageState extends State<BookingPage> {
                                       (states) {
                                 return const EdgeInsets.symmetric(
                                   horizontal: 100,
-                                  vertical: 17,
+                                  vertical: 22,
                                 );
                               }),
                             ),

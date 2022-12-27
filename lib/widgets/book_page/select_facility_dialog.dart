@@ -55,6 +55,11 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
     return Dialog(
       elevation: 0,
       // shape: OutlinedBorder,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(
+          15,
+        ),
+      ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(
           maxHeight: 550,
@@ -70,7 +75,7 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
           ),
           decoration: BoxDecoration(
             color: culturedWhite,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
           child: Container(
             // color: Colors.green,
@@ -195,14 +200,14 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
                     },
                   ),
                   const SizedBox(
-                    height: 25,
+                    height: 35,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       RegularButton(
                         text: 'Confirm',
-                        fontSize: 24,
+                        fontSize: 20,
                         disabled: false,
                         onTap: () {
                           // Amenities amen = Amenities();
@@ -213,7 +218,10 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
                           // print(selectedAmen);
                           Navigator.of(context).pop();
                         },
-                        padding: ButtonSize().longSize(),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 50,
+                          vertical: 15,
+                        ),
                       )
                     ],
                   )

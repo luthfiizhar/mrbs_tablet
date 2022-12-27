@@ -7,6 +7,7 @@ import 'package:mrbs_tablet/pages/home_page.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'firebase_options.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,9 +16,11 @@ void main() async {
   );
   await Hive.initFlutter();
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => MrbsTabletModel(),
-      child: const MyApp(),
+    Phoenix(
+      child: ChangeNotifierProvider(
+        create: (_) => MrbsTabletModel(),
+        child: const MyApp(),
+      ),
     ),
   );
 }
