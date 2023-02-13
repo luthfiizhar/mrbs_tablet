@@ -247,7 +247,7 @@ class TransparentBorderedWhiteButton extends StatelessWidget {
           (states) {
             return helveticaText.copyWith(
               fontFamily: 'Helvetica',
-              fontSize: 16,
+              fontSize: fontSize,
               fontWeight: FontWeight.w300,
             );
           },
@@ -273,7 +273,7 @@ class TransparentBorderedBlackButton extends StatelessWidget {
   const TransparentBorderedBlackButton({
     super.key,
     this.text,
-    this.fontSize,
+    this.fontSize = 16,
     this.disabled = false,
     this.onTap,
     this.padding,

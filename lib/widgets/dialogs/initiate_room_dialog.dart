@@ -7,6 +7,7 @@ import 'package:mrbs_tablet/constant/text_style.dart';
 import 'package:mrbs_tablet/model/model.dart';
 import 'package:mrbs_tablet/widgets/buttons/regular_button.dart';
 import 'package:mrbs_tablet/widgets/buttons/text_button.dart';
+import 'package:mrbs_tablet/widgets/dialogs/alert_dialog.dart';
 import 'package:mrbs_tablet/widgets/dropdown.dart';
 import 'package:mrbs_tablet/widgets/regular_input_field.dart';
 import 'package:provider/provider.dart';
@@ -14,19 +15,22 @@ import 'package:provider/provider.dart';
 class InitiateRoomDialog extends StatefulWidget {
   InitiateRoomDialog({
     super.key,
+    this.roomId = "0",
   });
 
+  String roomId;
   @override
   State<InitiateRoomDialog> createState() => _InitiateRoomDialogState();
 }
 
 class _InitiateRoomDialogState extends State<InitiateRoomDialog> {
+  ReqAPI apiReq = ReqAPI();
   final formKey = GlobalKey<FormState>();
   TextEditingController _nip = TextEditingController();
 
   FocusNode roomNode = FocusNode();
 
-  String roomId = "";
+  String roomId = "0";
   String roomName = "";
   String roomAlias = "";
 
@@ -36,11 +40,32 @@ class _InitiateRoomDialogState extends State<InitiateRoomDialog> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getRoomList().then((value) {
+    apiReq.getRoomList().then((value) {
       print(value);
-      setState(() {
-        roomList = value['Data'];
-      });
+      if (value['Status'].toString() == "200") {
+        setState(() {
+          roomList = value['Data'];
+          roomList.add({'RoomID': "0", "RoomAlias": "Choose"});
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogWhite(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogWhite(
+          title: "Error",
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
   }
 
@@ -54,7 +79,7 @@ class _InitiateRoomDialogState extends State<InitiateRoomDialog> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: Text(
-                item['RoomAlias'],
+                item['RoomAlias'] ?? "NULL",
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w300,

@@ -37,6 +37,7 @@ class BookingPage extends StatefulWidget {
 }
 
 class _BookingPageState extends State<BookingPage> {
+  ReqAPI apiReq = ReqAPI();
   final formKey = GlobalKey<FormState>();
   TextEditingController _eventName = TextEditingController();
   TextEditingController _eventDesc = TextEditingController();
@@ -65,8 +66,8 @@ class _BookingPageState extends State<BookingPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    print("ROOM ID ---> ${widget.roomId}");
     var minute = widget.today!.minute;
     var hour = widget.today!.hour;
     var endMinute;
@@ -101,25 +102,45 @@ class _BookingPageState extends State<BookingPage> {
     _startTime.text = startTime;
     _endTime.text = endTime;
 
-    getDetailRoomWithAmenities(widget.roomId).then((value) {
+    apiReq.getDetailRoomWithAmenities(widget.roomId).then((value) {
       print(value);
-      setState(() {
-        roomName = value['Data']['RoomAlias'];
-        resultAmenities = value['Data']['Amenities'];
-        for (var element in resultAmenities) {
-          if (element['Default'] > 0) {
-            listAmenities.add(
-              Amenities(
-                amenitiesId: element['AmenitiesID'],
-                amenitiesName: element['AmenitiesName'],
-                photo: element['ImageURL'],
-                qty: element['Default'],
-              ),
-            );
+      if (value['Status'].toString() == "200") {
+        setState(() {
+          roomName = value['Data']['RoomAlias'];
+          resultAmenities = value['Data']['Amenities'];
+          for (var element in resultAmenities) {
+            if (element['Default'] > 0) {
+              listAmenities.add(
+                Amenities(
+                  amenitiesId: element['AmenitiesID'],
+                  amenitiesName: element['AmenitiesName'],
+                  photo: element['ImageURL'],
+                  qty: element['Default'],
+                ),
+              );
+            }
           }
-        }
-        resultFoodAmenities = value['Data']['FoodAmenities'];
-      });
+          resultFoodAmenities = value['Data']['FoodAmenities'];
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogWhite(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogWhite(
+          title: 'Error',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
     eventNameNode.addListener(() {
       setState(() {});
@@ -133,6 +154,23 @@ class _BookingPageState extends State<BookingPage> {
     setState(() {
       startTime = value;
       _startTime.text = startTime;
+
+      dynamic endMinute;
+      dynamic endHour;
+      dynamic minutes = startTime.split(":").last;
+      dynamic hour = startTime.split(":").first;
+
+      endMinute = int.parse(minutes) + 15;
+      endHour = hour;
+      if (endMinute == 60) {
+        endMinute = 0;
+        endHour = int.parse(hour) + 1;
+      }
+
+      endTime =
+          "${endHour.toString().padLeft(2, '0')}:${endMinute.toString().padLeft(2, '0')}";
+      _endTime.text = endTime;
+      print(endTime);
     });
   }
 
@@ -286,17 +324,21 @@ class _BookingPageState extends State<BookingPage> {
                             onPressed: () {
                               if (formKey.currentState!.validate()) {
                                 formKey.currentState!.save();
-                                var todayString = DateFormat('yyyy-M-dd')
+                                var todayString = DateFormat('yyyy-MM-dd')
                                     .format(widget.today!);
 
                                 Booking booking = Booking();
-                                booking.roomId = model.roomId;
+                                booking.roomId = widget.roomId;
                                 booking.startDate = DateTime.parse(
                                     "$todayString $startTime:00");
                                 booking.endDate =
                                     DateTime.parse("$todayString $endTime:00");
-                                booking.summary = eventName;
-                                booking.description = eventDesc;
+                                booking.summary =
+                                    eventName.replaceAll('"', '\\"');
+                                booking.description = eventDesc
+                                    .replaceAll('"', '\\"')
+                                    .replaceAll('\n', '\\n');
+                                booking.meetingType = selectedType;
                                 List tempAmen = [];
                                 for (var element in listAmenities) {
                                   tempAmen.add({
@@ -451,6 +493,7 @@ class _BookingPageState extends State<BookingPage> {
                         selectedDate: selectedDate,
                         selectedTime: startTime,
                         setStartTime: setStartTime,
+                        roomId: widget.roomId,
                       ),
                     );
                   },
@@ -491,6 +534,7 @@ class _BookingPageState extends State<BookingPage> {
                   selectedTime: startTime,
                   startTime: startTime,
                   setEndTime: setEndTime,
+                  roomId: widget.roomId,
                 ),
               );
             },

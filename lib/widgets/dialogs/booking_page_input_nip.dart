@@ -29,6 +29,10 @@ class _InputNipBookingDialogState extends State<InputNipBookingDialog> {
 
   String nip = "";
 
+  ReqAPI apiReq = ReqAPI();
+
+  bool isLoading = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -127,60 +131,68 @@ class _InputNipBookingDialogState extends State<InputNipBookingDialog> {
                       const SizedBox(
                         width: 35,
                       ),
-                      RegularButton(
-                        text: 'Enter',
-                        disabled: false,
-                        onTap: () async {
-                          if (formKey.currentState!.validate()) {
-                            formKey.currentState!.save();
-                            // Navigator.of(context).pop();
-
-                            booking.empNip = nip;
-
-                            //BOOKING FUNCTION
-                            bookingRoom(booking).then((value) {
-                              print(value);
-                              if (value['Status'] == "200") {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialogWhite(
-                                    title: value['Title'],
-                                    contentText: value['Message'],
-                                    isSuccess: true,
-                                  ),
-                                ).then((value) {
-                                  Navigator.of(context).pop(true);
+                      isLoading
+                          ? const CircularProgressIndicator()
+                          : RegularButton(
+                              text: 'Enter',
+                              disabled: false,
+                              onTap: () async {
+                                setState(() {
+                                  isLoading = true;
                                 });
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialogWhite(
-                                    title: value['Title'],
-                                    contentText: value['Message'],
-                                    isSuccess: false,
-                                  ),
-                                ).then((value) {
-                                  Navigator.of(context).pop(false);
-                                });
-                              }
-                            }).onError((error, stackTrace) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialogWhite(
-                                  title: 'Failed connect to API',
-                                  contentText: error.toString(),
-                                  isSuccess: false,
-                                ),
-                              ).then((value) {
-                                Navigator.of(context).pop(false);
-                              });
-                            });
-                            //END BOOKING FUNCTION
-                          }
-                        },
-                        fontSize: 24,
-                        padding: ButtonSize().mediumSize(),
-                      )
+                                if (formKey.currentState!.validate()) {
+                                  formKey.currentState!.save();
+                                  // Navigator.of(context).pop();
+
+                                  booking.empNip = nip;
+
+                                  //BOOKING FUNCTION
+                                  apiReq.bookingRoom(booking).then((value) {
+                                    print(value);
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    if (value['Status'] == "200") {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogWhite(
+                                          title: value['Title'],
+                                          contentText: value['Message'],
+                                          isSuccess: true,
+                                        ),
+                                      ).then((value) {
+                                        Navigator.of(context).pop(true);
+                                      });
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogWhite(
+                                          title: value['Title'],
+                                          contentText: value['Message'],
+                                          isSuccess: false,
+                                        ),
+                                      ).then((value) {
+                                        Navigator.of(context).pop(false);
+                                      });
+                                    }
+                                  }).onError((error, stackTrace) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialogWhite(
+                                        title: 'Failed connect to API',
+                                        contentText: error.toString(),
+                                        isSuccess: false,
+                                      ),
+                                    ).then((value) {
+                                      Navigator.of(context).pop(false);
+                                    });
+                                  });
+                                  //END BOOKING FUNCTION
+                                }
+                              },
+                              fontSize: 24,
+                              padding: ButtonSize().mediumSize(),
+                            )
                     ],
                   ),
                   const SizedBox(

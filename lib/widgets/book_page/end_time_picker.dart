@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mrbs_tablet/api_request.dart';
 import 'package:mrbs_tablet/constant/color.dart';
 import 'package:mrbs_tablet/constant/text_style.dart';
 import 'package:mrbs_tablet/model/model.dart';
 import 'package:mrbs_tablet/model/room_event_class.dart';
 import 'package:mrbs_tablet/model/room_event_data_source.dart';
 import 'package:mrbs_tablet/widgets/book_page/calendar_dialog.dart';
+import 'package:mrbs_tablet/widgets/dialogs/alert_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -16,18 +18,21 @@ class PickEndTimeDialog extends StatefulWidget {
     this.selectedDate,
     this.startTime,
     this.setEndTime,
+    this.roomId = "",
   });
 
   String? selectedTime;
   String? startTime;
   DateTime? selectedDate;
   Function? setEndTime;
+  String roomId;
 
   @override
   State<PickEndTimeDialog> createState() => _PickEndTimeDialogState();
 }
 
 class _PickEndTimeDialogState extends State<PickEndTimeDialog> {
+  ReqAPI apiReq = ReqAPI();
   CalendarController _calendar = CalendarController();
 
   String today = "";
@@ -160,6 +165,39 @@ class _PickEndTimeDialogState extends State<PickEndTimeDialog> {
     // print(times);
   }
 
+  initEndTime() {
+    apiReq
+        .endTimeSelector(
+            widget.roomId,
+            DateFormat('yyyy-MM-dd').format(widget.selectedDate!),
+            widget.startTime!)
+        .then((value) {
+      if (value['Status'].toString() == "200") {
+        setState(() {
+          timeList = value['Data'];
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogWhite(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogWhite(
+          title: 'Error',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -167,7 +205,8 @@ class _PickEndTimeDialogState extends State<PickEndTimeDialog> {
     var todayDateTime = DateTime.now();
     today = DateFormat('EEEE, d MMMM y').format(todayDateTime);
     addAppointmen();
-    setEndTime(widget.startTime!);
+    initEndTime();
+    // setEndTime(widget.startTime!);
   }
 
   @override
@@ -239,11 +278,12 @@ class _PickEndTimeDialogState extends State<PickEndTimeDialog> {
                                       InkWell(
                                         onTap: () {
                                           // widget.selectedTime = timeList[index];
-                                          widget.setEndTime!(timeList[index]);
+                                          widget.setEndTime!(
+                                              timeList[index]['Time']);
                                           Navigator.of(context).pop();
                                         },
                                         child: Text(
-                                          timeList[index],
+                                          timeList[index]['Time'],
                                           style: const TextStyle(
                                             color: davysGray,
                                             fontSize: 16,

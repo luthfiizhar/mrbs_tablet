@@ -35,15 +35,17 @@ class _CustomDigitalClockState extends State<CustomDigitalClock> {
   void _getTime() {
     final DateTime now = DateTime.now();
     final String formattedDateTime = _formatDateTime(now);
-    setState(() {
-      // if (now.minute == 45 && now.second == 0) {
-      //   print('menit 45');
-      //   widget.checkDb!();
-      // }
-      widget.time = formattedDateTime;
-      Provider.of<MrbsTabletModel>(context, listen: false)
-          .setTime(formattedDateTime);
-    });
+    if (mounted) {
+      setState(() {
+        // if (now.minute == 45 && now.second == 0) {
+        //   print('menit 45');
+        //   widget.checkDb!();
+        // }
+        widget.time = formattedDateTime;
+        Provider.of<MrbsTabletModel>(context, listen: false)
+            .setTime(formattedDateTime);
+      });
+    }
   }
 
   String _formatDateTime(DateTime dateTime) {
@@ -56,7 +58,6 @@ class _CustomDigitalClockState extends State<CustomDigitalClock> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     timer!.cancel();
   }

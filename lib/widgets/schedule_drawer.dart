@@ -7,6 +7,7 @@ import 'package:mrbs_tablet/constant/text_style.dart';
 import 'package:mrbs_tablet/model/model.dart';
 import 'package:mrbs_tablet/model/room_event_class.dart';
 import 'package:mrbs_tablet/model/room_event_data_source.dart';
+import 'package:mrbs_tablet/widgets/dialogs/alert_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -25,6 +26,7 @@ class ScheduleDrawer extends StatefulWidget {
 }
 
 class _ScheduleDrawerState extends State<ScheduleDrawer> {
+  ReqAPI apiReq = ReqAPI();
   CalendarController _calendar = CalendarController();
   String today = "";
 
@@ -80,15 +82,35 @@ class _ScheduleDrawerState extends State<ScheduleDrawer> {
     var todayDateTime = DateTime.now();
     today = DateFormat('EEEE, d MMMM y').format(todayDateTime);
 
-    getTabletSchedule(widget.roomId).then((value) async {
-      print(value);
-      dynamic result = value['Data'];
-      await setDataToCalendar(result);
-      events!.notifyListeners(
-          CalendarDataSourceAction.reset, events!.appointments!);
-      // SchedulerBinding.instance.addPostFrameCallback((duration) {
-      //   setState(() {});
-      // });
+    apiReq.getTabletSchedule(widget.roomId).then((value) async {
+      print("GET SCHEDULE --> $value");
+      if (value['Status'].toString() == "200") {
+        dynamic result = value['Data'];
+        await setDataToCalendar(result);
+        events!.notifyListeners(
+            CalendarDataSourceAction.reset, events!.appointments!);
+        // SchedulerBinding.instance.addPostFrameCallback((duration) {
+        //   setState(() {});
+        // });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogWhite(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogWhite(
+          title: 'Error',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
   }
 

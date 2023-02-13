@@ -7,6 +7,7 @@ import 'package:mrbs_tablet/constant/text_style.dart';
 import 'package:mrbs_tablet/model/model.dart';
 import 'package:mrbs_tablet/model/room_event_class.dart';
 import 'package:mrbs_tablet/model/room_event_data_source.dart';
+import 'package:mrbs_tablet/widgets/dialogs/alert_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -18,6 +19,7 @@ class CalendarDialog extends StatefulWidget {
 }
 
 class _CalendarDialogState extends State<CalendarDialog> {
+  ReqAPI apiReq = ReqAPI();
   String roomId = "";
   CalendarController _calendar = CalendarController();
   bool isDark = true;
@@ -84,11 +86,31 @@ class _CalendarDialogState extends State<CalendarDialog> {
     var todayDateTime = DateTime.now();
     today = DateFormat('EEEE, d MMMM y').format(todayDateTime);
     getRoomData().then((value) {
-      getTabletSchedule(roomId).then((value) async {
-        dynamic result = value['Data'];
-        await setDataToCalendar(result);
-        events!.notifyListeners(
-            CalendarDataSourceAction.reset, events!.appointments!);
+      apiReq.getTabletSchedule(roomId).then((value) async {
+        if (value['Status'].toString() == "200") {
+          dynamic result = value['Data'];
+          await setDataToCalendar(result);
+          events!.notifyListeners(
+              CalendarDataSourceAction.reset, events!.appointments!);
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialogWhite(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          );
+        }
+      }).onError((error, stackTrace) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogWhite(
+            title: 'Error',
+            contentText: error.toString(),
+            isSuccess: false,
+          ),
+        );
       });
     });
   }

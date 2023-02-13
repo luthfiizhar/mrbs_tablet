@@ -2,100 +2,114 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:mrbs_tablet/model/booking_class.dart';
+import 'package:mrbs_tablet/model/check_in.dart';
+import 'api_link.dart';
 
-String apiUrl = 'fmklg.klgsys.com';
+class ReqAPI {
+  Future getDetailRoom(String roomId) async {
+    var url = Uri.https(
+        apiUrl, '/MRBS_Backend/public/api/tablet/room/detail/$roomId');
+    Map<String, String> requestHeader = {
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.get(url, headers: requestHeader);
 
-Future getDetailRoom(String roomId) async {
-  var url =
-      Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet/room/detail/$roomId');
-  Map<String, String> requestHeader = {
-    'Content-Type': 'application/json',
-  };
-  try {
-    var response = await http.get(url, headers: requestHeader);
+      var data = json.decode(response.body);
 
-    var data = json.decode(response.body);
-
-    return data;
-  } on Error catch (e) {
-    return e;
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
   }
-}
 
-Future getDetailRoomWithAmenities(String roomId) async {
-  var url = Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet/room/$roomId');
-  Map<String, String> requestHeader = {
-    'Content-Type': 'application/json',
-  };
-  try {
-    var response = await http.get(url, headers: requestHeader);
+  Future getDetailRoomWithAmenities(String roomId) async {
+    print(roomId);
+    var url = Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet/room/$roomId');
+    Map<String, String> requestHeader = {
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.get(url, headers: requestHeader);
 
-    var data = json.decode(response.body);
+      var data = json.decode(response.body);
 
-    return data;
-  } on Error catch (e) {
-    return e;
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
   }
-}
 
-Future checkIn(String bookingId, String nip) async {
-  var url = Uri.https(
-      apiUrl, '/MRBS_Backend/public/api/tablet/check-in/$bookingId/$nip');
-  Map<String, String> requestHeader = {
-    'Content-Type': 'application/json',
-  };
-  try {
-    var response = await http.get(url, headers: requestHeader);
+  Future checkIn(CheckIn checkin) async {
+    // var url = Uri.https(
+    //     apiUrl, '/MRBS_Backend/public/api/tablet/check-in/$bookingId/$nip');
+    var url = Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet/v2/check-in');
 
-    var data = json.decode(response.body);
+    Map<String, String> requestHeader = {
+      'Content-Type': 'application/json',
+    };
 
-    return data;
-  } on Error catch (e) {
-    return e;
+    var bodySend = """
+    {
+      "BookingID" : "${checkin.bookingId}",
+      "EmpNIP" : "${checkin.empNIP}",
+      "BookingOrigin" : "${checkin.bookingOrigin}",
+      "RoomID" : "${checkin.roomId}"
+    }
+    """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
   }
-}
 
-Future checkOut(String bookingId, String nip) async {
-  var url = Uri.https(
-      apiUrl, '/MRBS_Backend/public/api/tablet/check-out/$bookingId/$nip');
-  Map<String, String> requestHeader = {
-    'Content-Type': 'application/json',
-  };
-  try {
-    var response = await http.get(url, headers: requestHeader);
+  Future checkOut(String bookingId, String nip) async {
+    var url = Uri.https(
+        apiUrl, '/MRBS_Backend/public/api/tablet/check-out/$bookingId/$nip');
+    Map<String, String> requestHeader = {
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.get(url, headers: requestHeader);
 
-    var data = json.decode(response.body);
+      var data = json.decode(response.body);
 
-    return data;
-  } on Error catch (e) {
-    return e;
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
   }
-}
 
-Future cancelBooking(String bookingId, String nip) async {
-  var url = Uri.https(
-      apiUrl, '/MRBS_Backend/public/api/tablet/cancel/$bookingId/$nip');
-  Map<String, String> requestHeader = {
-    'Content-Type': 'application/json',
-  };
-  try {
-    var response = await http.get(url, headers: requestHeader);
+  Future cancelBooking(String bookingId, String nip) async {
+    var url = Uri.https(
+        apiUrl, '/MRBS_Backend/public/api/tablet/cancel/$bookingId/$nip');
+    Map<String, String> requestHeader = {
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.get(url, headers: requestHeader);
 
-    var data = json.decode(response.body);
+      var data = json.decode(response.body);
 
-    return data;
-  } on Error catch (e) {
-    return e;
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
   }
-}
 
-Future bookingRoom(Booking booking) async {
-  var url = Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet-booking');
-  Map<String, String> requestHeader = {
-    'Content-Type': 'application/json',
-  };
+  Future bookingRoom(Booking booking) async {
+    var url = Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet-booking');
+    Map<String, String> requestHeader = {
+      'Content-Type': 'application/json',
+    };
 
-  var bodySend = """
+    var bodySend = """
   {
       "RoomID": "${booking.roomId}",
       "EmpNIP": "${booking.empNip}",
@@ -111,51 +125,93 @@ Future bookingRoom(Booking booking) async {
       "FoodAmenities": ${booking.foodAmenities}
     }
   """;
-  print(bodySend);
-  try {
-    var response = await http.post(
-      url,
-      headers: requestHeader,
-      body: bodySend,
-    );
+    print(bodySend);
+    try {
+      var response = await http.post(
+        url,
+        headers: requestHeader,
+        body: bodySend,
+      );
 
-    var data = json.decode(response.body);
+      var data = json.decode(response.body);
 
-    return data;
-  } on Error catch (e) {
-    return e;
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
   }
-}
 
-Future getRoomList() async {
-  var url = Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet/room-list');
-  Map<String, String> requestHeader = {
-    'Content-Type': 'application/json',
-  };
-  try {
-    var response = await http.get(url, headers: requestHeader);
+  Future getRoomList() async {
+    var url = Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet/room-list');
+    Map<String, String> requestHeader = {
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.get(url, headers: requestHeader);
 
-    var data = json.decode(response.body);
+      var data = json.decode(response.body);
 
-    return data;
-  } on Error catch (e) {
-    return e;
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
   }
-}
 
-Future getTabletSchedule(String roomId) async {
-  var url =
-      Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet/schedule/$roomId');
-  Map<String, String> requestHeader = {
-    'Content-Type': 'application/json',
-  };
-  try {
-    var response = await http.get(url, headers: requestHeader);
+  Future getTabletSchedule(String roomId) async {
+    var url =
+        Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet/schedule/$roomId');
+    Map<String, String> requestHeader = {
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.get(url, headers: requestHeader);
 
-    var data = json.decode(response.body);
+      var data = json.decode(response.body);
 
-    return data;
-  } on Error catch (e) {
-    return e;
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future startTimeSelector(String roomId) async {
+    var url =
+        Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet/start-time/$roomId');
+    Map<String, String> requestHeader = {
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.get(url, headers: requestHeader);
+      print(response.body);
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future endTimeSelector(String roomId, String date, String startTime) async {
+    var url = Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet/end-time');
+    Map<String, String> requestHeader = {
+      'Content-Type': 'application/json',
+    };
+    var bodySend = """
+    {
+        "RoomID" : "$roomId",
+        "Date" : "$date",
+        "Start" : "$startTime"
+    }
+    """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
   }
 }

@@ -10,6 +10,7 @@ class Room {
     this.duration = "",
     this.summary = "",
     this.bookingId = "",
+    this.bookingOrigin = "",
   });
 
   String? bookingId;
@@ -22,6 +23,7 @@ class Room {
   String? duration;
   String? summary;
   String? roomType;
+  String? bookingOrigin;
 
   Room.fromJson(Map<String, dynamic> response) {
     bookingId = response['BookingID'];
@@ -33,6 +35,7 @@ class Room {
     status = response['Status'];
     summary = response['Summary'];
     duration = response['Duration'];
+    bookingOrigin = response['BookingOrigin'] ?? "-";
   }
 
   Map<String, dynamic> toJson() {
@@ -42,7 +45,8 @@ class Room {
       'RoomID': roomId,
       'Status': status,
       'Summary': summary,
-      'Duration': duration
+      'Duration': duration,
+      'Origin': bookingOrigin
     };
   }
 
