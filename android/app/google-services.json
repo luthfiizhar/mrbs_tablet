@@ -1,35 +1,42 @@
 {
   "project_info": {
-    "project_number": "949076644731",
-    "firebase_url": "https://kawanlamamrbsworkspace-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "kawanlamamrbsworkspace",
-    "storage_bucket": "kawanlamamrbsworkspace.appspot.com"
+    "project_number": "425240684876",
+    "firebase_url": "https://mrbsproduction-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "mrbsproduction",
+    "storage_bucket": "mrbsproduction.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:949076644731:android:c66a48a6082938737563de",
+        "mobilesdk_app_id": "1:425240684876:android:4de4eda01e7feceec787e9",
         "android_client_info": {
           "package_name": "com.example.mrbs_tablet"
         }
       },
       "oauth_client": [
         {
-          "client_id": "949076644731-7sjq71tm7oisl027nbjoaglevqbsk0v8.apps.googleusercontent.com",
+          "client_id": "425240684876-e933ni4q0moual4dk2469q66m97648e4.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBCMImj7StW30juDLPmOqBB5TZhtyIdvp4"
+          "current_key": "AIzaSyABGbb4aDXDD5vtAEPfwr1It4n_dODYQR8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "949076644731-7sjq71tm7oisl027nbjoaglevqbsk0v8.apps.googleusercontent.com",
+              "client_id": "425240684876-e933ni4q0moual4dk2469q66m97648e4.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "425240684876-u3pkpcv0c3546i7hmob06tbu878al1uq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mrbsTablet"
+              }
             }
           ]
         }
