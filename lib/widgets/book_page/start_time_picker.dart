@@ -278,7 +278,7 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
                 ),
               ),
               Align(
-                alignment: Alignment.bottomCenter,
+                alignment: Alignment.bottomRight,
                 child: SizedBox(
                   width: 610,
                   child: Row(

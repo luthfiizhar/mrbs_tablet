@@ -23,6 +23,7 @@ class BookingPage extends StatefulWidget {
     super.key,
     required this.roomId,
     required this.roomName,
+    this.roomType,
     this.roomAlias,
     this.today,
   });
@@ -30,6 +31,7 @@ class BookingPage extends StatefulWidget {
   final String roomName;
   final String roomId;
   final String? roomAlias;
+  String? roomType;
   DateTime? today;
 
   @override
@@ -225,193 +227,363 @@ class _BookingPageState extends State<BookingPage> {
           child: Scaffold(
             backgroundColor: white,
             resizeToAvoidBottomInset: false,
-            body: ConstrainedBox(
-              constraints: BoxConstraints(
-                // minHeight: MediaQuery.of(context).size.height,
-                // maxHeight: MediaQuery.of(context).size.height,
-                minWidth: MediaQuery.of(context).size.width,
-                maxWidth: MediaQuery.of(context).size.width,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 50,
-                  horizontal: 70,
+            body: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  // minHeight: MediaQuery.of(context).size.height,
+                  // maxHeight: MediaQuery.of(context).size.height,
+                  minWidth: MediaQuery.of(context).size.width,
+                  maxWidth: MediaQuery.of(context).size.width,
                 ),
                 child: Stack(
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            text: 'Booking Form ',
-                            style: helveticaText.copyWith(
-                              fontSize: 48,
-                              fontWeight: FontWeight.w700,
-                              color: eerieBlack,
-                              height: 1.15,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 50,
+                        horizontal: 70,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: 'Booking Form ',
+                              style: helveticaText.copyWith(
+                                fontSize: 48,
+                                fontWeight: FontWeight.w700,
+                                color: eerieBlack,
+                                height: 1.15,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: '| $roomName',
+                                  style: helveticaText.copyWith(
+                                    fontSize: 48,
+                                    fontWeight: FontWeight.w300,
+                                    color: eerieBlack,
+                                    height: 1.15,
+                                  ),
+                                ),
+                              ],
                             ),
+                          ),
+                          const SizedBox(
+                            height: 60,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextSpan(
-                                text: '| $roomName',
-                                style: helveticaText.copyWith(
-                                  fontSize: 48,
-                                  fontWeight: FontWeight.w300,
-                                  color: eerieBlack,
-                                  height: 1.15,
+                              SizedBox(
+                                width: 610,
+                                child: Form(
+                                  key: formKey,
+                                  child: inputSection1(),
                                 ),
                               ),
+                              const SizedBox(
+                                width: 40,
+                              ),
+                              Expanded(
+                                // width: 460,
+                                child: inputSection2(),
+                              )
                             ],
                           ),
-                        ),
-                        const SizedBox(
-                          height: 60,
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Form(
-                                key: formKey,
-                                child: inputSection1(),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 60,
-                            ),
-                            SizedBox(
-                              width: 460,
-                              child: inputSection2(),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 90,
-                        ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.resolveWith<Color>(
-                                      (states) {
-                                return eerieBlack;
-                              }),
-                              shape: MaterialStateProperty.resolveWith<
-                                  OutlinedBorder>((states) {
-                                return RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                );
-                              }),
-                              textStyle:
-                                  MaterialStateProperty.resolveWith<TextStyle>(
-                                      (states) {
-                                return helveticaText.copyWith(
-                                  fontSize: 36,
-                                  fontWeight: FontWeight.w700,
-                                  color: scaffoldBg,
-                                );
-                              }),
-                              padding:
-                                  MaterialStateProperty.resolveWith<EdgeInsets>(
-                                      (states) {
-                                return const EdgeInsets.symmetric(
-                                  horizontal: 100,
-                                  vertical: 22,
-                                );
-                              }),
-                            ),
-                            onPressed: () {
-                              if (formKey.currentState!.validate()) {
-                                formKey.currentState!.save();
-                                var todayString = DateFormat('yyyy-MM-dd')
-                                    .format(widget.today!);
-
-                                Booking booking = Booking();
-                                booking.roomId = widget.roomId;
-                                booking.startDate = DateTime.parse(
-                                    "$todayString $startTime:00");
-                                booking.endDate =
-                                    DateTime.parse("$todayString $endTime:00");
-                                booking.summary =
-                                    eventName.replaceAll('"', '\\"');
-                                booking.description = eventDesc
-                                    .replaceAll('"', '\\"')
-                                    .replaceAll('\n', '\\n');
-                                booking.meetingType = selectedType;
-                                List tempAmen = [];
-                                for (var element in listAmenities) {
-                                  tempAmen.add({
-                                    '"AmenitiesID"': element.amenitiesId,
-                                    '"Amount"': element.qty
-                                  });
-                                }
-                                List tempFood = [];
-                                for (var element in listFoods) {
-                                  tempFood.add({
-                                    '"FoodAmenitiesID"': element.amenitiesId,
-                                    '"Amount"': element.qty
-                                  });
-                                }
-                                booking.amenities = tempAmen;
-                                booking.foodAmenities = tempFood;
-                                booking.attendants = [];
-
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => InputNipBookingDialog(
-                                    booking: booking,
-                                  ),
-                                ).then((value) {
-                                  if (value) {
-                                    Navigator.of(context).pop();
-                                  }
-                                });
-                                //BOOKING FUNCTION
-                                // bookingRoom(booking).then((value) {
-                                //   print(value);
-                                //   if (value['Status'] == "200") {
-                                //     showDialog(
-                                //       context: context,
-                                //       builder: (context) => AlertDialogBlack(
-                                //         title: value['Title'],
-                                //         contentText: value['Message'],
-                                //         isSuccess: true,
-                                //       ),
-                                //     );
-                                //   } else {
-                                //     showDialog(
-                                //       context: context,
-                                //       builder: (context) => AlertDialogBlack(
-                                //         title: value['Title'],
-                                //         contentText: value['Message'],
-                                //         isSuccess: false,
-                                //       ),
-                                //     );
-                                //   }
-                                // }).onError((error, stackTrace) {
-                                //   showDialog(
-                                //     context: context,
-                                //     builder: (context) => AlertDialogBlack(
-                                //       title: 'Failed connect to API',
-                                //       contentText: error.toString(),
-                                //       isSuccess: false,
-                                //     ),
-                                //   );
-                                // });
-                                //END BOOKING FUNCTION
-                              }
-                            },
-                            child: const Text(
-                              'Book Now',
+                          const SizedBox(
+                            height: 35,
+                          ),
+                          Text(
+                            'Room Facilities',
+                            style: helveticaText.copyWith(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w400,
+                              color: eerieBlack,
                             ),
                           ),
-                        )
-                      ],
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          Container(
+                            height: 120,
+                            width: double.infinity,
+                            child: ListView(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                Center(
+                                  child: InkWell(
+                                    onTap: () {
+                                      showDialog(
+                                        // barrierDismissible: false,
+                                        context: context,
+                                        builder: (context) =>
+                                            SelectAmenitiesDialog(
+                                          listAmen: resultAmenities,
+                                          setListAmenities: setListFacility,
+                                        ),
+                                      ).then((value) {
+                                        print('facility');
+                                        print(resultAmenities);
+                                        setState(() {});
+                                      });
+                                    },
+                                    child: SizedBox(
+                                      width: 110,
+                                      height: 110,
+                                      child: DottedBorder(
+                                        borderType: BorderType.Circle,
+                                        color: eerieBlack,
+                                        dashPattern: const [10, 4],
+                                        radius: const Radius.circular(50),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.add_circle_outline_sharp,
+                                            size: 30,
+                                            color: eerieBlack,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                ListView.builder(
+                                  itemCount: listAmenities.length,
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 20,
+                                      ),
+                                      child: FacilityItemContainer(
+                                        img: listAmenities[index].photo!,
+                                        unit: listAmenities[index].qty!,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          Visibility(
+                            visible: false,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  height: 25,
+                                ),
+                                Text(
+                                  'Food & Beverages',
+                                  style: helveticaText.copyWith(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w400,
+                                    color: eerieBlack,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 25,
+                                ),
+                                Container(
+                                  height: 120,
+                                  width: double.infinity,
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    children: [
+                                      Center(
+                                        child: InkWell(
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              // barrierDismissible: false,
+                                              builder: (context) =>
+                                                  SelectFoodDialog(
+                                                listFood: resultFoodAmenities,
+                                                setListFood: setListFood,
+                                              ),
+                                            ).then((value) {
+                                              print('food');
+                                              print(resultFoodAmenities);
+                                              setState(() {});
+                                            });
+                                          },
+                                          child: DottedBorder(
+                                            borderType: BorderType.Circle,
+                                            color: eerieBlack,
+                                            dashPattern: const [10, 4],
+                                            radius: const Radius.circular(50),
+                                            child: const SizedBox(
+                                              // color: greenAcent,
+                                              width: 100,
+                                              height: 100,
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons
+                                                      .add_circle_outline_sharp,
+                                                  size: 30,
+                                                  color: eerieBlack,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      ListView.builder(
+                                        itemCount: listFoods.length,
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        itemBuilder: (context, index) {
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                              right: 20,
+                                            ),
+                                            child: FacilityItemContainer(
+                                              img: listFoods[index].photo!,
+                                              unit: listFoods[index].qty!,
+                                              isFood: true,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 75,
+                          ),
+                          Align(
+                            alignment: Alignment.center,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith<Color>(
+                                        (states) {
+                                  return eerieBlack;
+                                }),
+                                shape: MaterialStateProperty.resolveWith<
+                                    OutlinedBorder>((states) {
+                                  return RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  );
+                                }),
+                                textStyle: MaterialStateProperty.resolveWith<
+                                    TextStyle>((states) {
+                                  return helveticaText.copyWith(
+                                    fontSize: 36,
+                                    fontWeight: FontWeight.w700,
+                                    color: scaffoldBg,
+                                  );
+                                }),
+                                padding: MaterialStateProperty.resolveWith<
+                                    EdgeInsets>((states) {
+                                  return const EdgeInsets.symmetric(
+                                    horizontal: 100,
+                                    vertical: 22,
+                                  );
+                                }),
+                              ),
+                              onPressed: () {
+                                if (formKey.currentState!.validate()) {
+                                  formKey.currentState!.save();
+                                  var todayString = DateFormat('yyyy-MM-dd')
+                                      .format(widget.today!);
+
+                                  Booking booking = Booking();
+                                  booking.roomId = widget.roomId;
+                                  booking.startDate = DateTime.parse(
+                                      "$todayString $startTime:00");
+                                  booking.endDate = DateTime.parse(
+                                      "$todayString $endTime:00");
+                                  booking.summary =
+                                      eventName.replaceAll('"', '\\"');
+                                  booking.description = eventDesc
+                                      .replaceAll('"', '\\"')
+                                      .replaceAll('\n', '\\n');
+                                  booking.meetingType = selectedType;
+                                  List tempAmen = [];
+                                  for (var element in listAmenities) {
+                                    tempAmen.add({
+                                      '"AmenitiesID"': element.amenitiesId,
+                                      '"Amount"': element.qty
+                                    });
+                                  }
+                                  List tempFood = [];
+                                  for (var element in listFoods) {
+                                    tempFood.add({
+                                      '"FoodAmenitiesID"': element.amenitiesId,
+                                      '"Amount"': element.qty
+                                    });
+                                  }
+                                  booking.amenities = tempAmen;
+                                  booking.foodAmenities = tempFood;
+                                  booking.attendants = [];
+
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => InputNipBookingDialog(
+                                      booking: booking,
+                                    ),
+                                  ).then((value) {
+                                    if (value) {
+                                      Navigator.of(context).pop();
+                                    }
+                                  });
+                                  //BOOKING FUNCTION
+                                  // bookingRoom(booking).then((value) {
+                                  //   print(value);
+                                  //   if (value['Status'] == "200") {
+                                  //     showDialog(
+                                  //       context: context,
+                                  //       builder: (context) => AlertDialogBlack(
+                                  //         title: value['Title'],
+                                  //         contentText: value['Message'],
+                                  //         isSuccess: true,
+                                  //       ),
+                                  //     );
+                                  //   } else {
+                                  //     showDialog(
+                                  //       context: context,
+                                  //       builder: (context) => AlertDialogBlack(
+                                  //         title: value['Title'],
+                                  //         contentText: value['Message'],
+                                  //         isSuccess: false,
+                                  //       ),
+                                  //     );
+                                  //   }
+                                  // }).onError((error, stackTrace) {
+                                  //   showDialog(
+                                  //     context: context,
+                                  //     builder: (context) => AlertDialogBlack(
+                                  //       title: 'Failed connect to API',
+                                  //       contentText: error.toString(),
+                                  //       isSuccess: false,
+                                  //     ),
+                                  //   );
+                                  // });
+                                  //END BOOKING FUNCTION
+                                }
+                              },
+                              child: const Text(
+                                'Book Now',
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                     Positioned(
-                      top: 0,
-                      right: 0,
+                      top: 40,
+                      right: 50,
                       child: InkWell(
                         onTap: () {
                           Navigator.of(context).pop(false);
@@ -477,6 +649,15 @@ class _BookingPageState extends State<BookingPage> {
         const SizedBox(
           height: 25,
         ),
+      ],
+    );
+  }
+
+  Widget inputSection2() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         inputField(
           true,
           'Meeting Start',
@@ -570,7 +751,7 @@ class _BookingPageState extends State<BookingPage> {
           true,
           'Type',
           SizedBox(
-            width: 300,
+            width: 270,
             height: 30,
             child: ListView(
               shrinkWrap: true,
@@ -601,170 +782,6 @@ class _BookingPageState extends State<BookingPage> {
                 ),
               ],
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget inputSection2() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Room Facilities',
-          style: helveticaText.copyWith(
-            fontSize: 22,
-            fontWeight: FontWeight.w400,
-            color: eerieBlack,
-          ),
-        ),
-        const SizedBox(
-          height: 25,
-        ),
-        Container(
-          height: 120,
-          width: double.infinity,
-          child: ListView(
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            children: [
-              Center(
-                child: InkWell(
-                  onTap: () {
-                    showDialog(
-                      // barrierDismissible: false,
-                      context: context,
-                      builder: (context) => SelectAmenitiesDialog(
-                        listAmen: resultAmenities,
-                        setListAmenities: setListFacility,
-                      ),
-                    ).then((value) {
-                      print('facility');
-                      print(resultAmenities);
-                      setState(() {});
-                    });
-                  },
-                  child: SizedBox(
-                    width: 110,
-                    height: 110,
-                    child: DottedBorder(
-                      borderType: BorderType.Circle,
-                      color: eerieBlack,
-                      dashPattern: const [10, 4],
-                      radius: const Radius.circular(50),
-                      child: Center(
-                        child: Icon(
-                          Icons.add_circle_outline_sharp,
-                          size: 30,
-                          color: eerieBlack,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              ListView.builder(
-                itemCount: listAmenities.length,
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                      right: 20,
-                    ),
-                    child: FacilityItemContainer(
-                      img: listAmenities[index].photo!,
-                      unit: listAmenities[index].qty!,
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(
-          height: 25,
-        ),
-        Text(
-          'Food & Beverages',
-          style: helveticaText.copyWith(
-            fontSize: 22,
-            fontWeight: FontWeight.w400,
-            color: eerieBlack,
-          ),
-        ),
-        const SizedBox(
-          height: 25,
-        ),
-        Container(
-          height: 120,
-          width: double.infinity,
-          child: ListView(
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            children: [
-              Center(
-                child: InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      // barrierDismissible: false,
-                      builder: (context) => SelectFoodDialog(
-                        listFood: resultFoodAmenities,
-                        setListFood: setListFood,
-                      ),
-                    ).then((value) {
-                      print('food');
-                      print(resultFoodAmenities);
-                      setState(() {});
-                    });
-                  },
-                  child: DottedBorder(
-                    borderType: BorderType.Circle,
-                    color: eerieBlack,
-                    dashPattern: const [10, 4],
-                    radius: const Radius.circular(50),
-                    child: const SizedBox(
-                      // color: greenAcent,
-                      width: 100,
-                      height: 100,
-                      child: Center(
-                        child: Icon(
-                          Icons.add_circle_outline_sharp,
-                          size: 30,
-                          color: eerieBlack,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              ListView.builder(
-                itemCount: listFoods.length,
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                      right: 20,
-                    ),
-                    child: FacilityItemContainer(
-                      img: listFoods[index].photo!,
-                      unit: listFoods[index].qty!,
-                      isFood: true,
-                    ),
-                  );
-                },
-              ),
-            ],
           ),
         ),
       ],
