@@ -214,4 +214,26 @@ class ReqAPI {
       return e;
     }
   }
+
+  Future checkNipAdmin(String nip) async {
+    var url = Uri.https(apiUrl, '/MRBS_Backend/public/api/tablet/check-nip');
+    Map<String, String> requestHeader = {
+      'Content-Type': 'application/json',
+    };
+    var bodySend = """
+    {
+        "EmpNIP" : "$nip"
+    }
+    """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
 }

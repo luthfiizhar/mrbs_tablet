@@ -66,6 +66,8 @@ class _BookingPageState extends State<BookingPage> {
   List resultAmenities = [];
   List resultFoodAmenities = [];
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -106,6 +108,9 @@ class _BookingPageState extends State<BookingPage> {
 
     apiReq.getDetailRoomWithAmenities(widget.roomId).then((value) {
       print(value);
+      setState(() {
+        isLoading = false;
+      });
       if (value['Status'].toString() == "200") {
         setState(() {
           roomName = value['Data']['RoomAlias'];
@@ -135,6 +140,9 @@ class _BookingPageState extends State<BookingPage> {
         );
       }
     }).onError((error, stackTrace) {
+      setState(() {
+        isLoading = false;
+      });
       showDialog(
         context: context,
         builder: (context) => AlertDialogWhite(
@@ -493,85 +501,217 @@ class _BookingPageState extends State<BookingPage> {
                                 }),
                               ),
                               onPressed: () {
-                                if (formKey.currentState!.validate()) {
-                                  formKey.currentState!.save();
-                                  var todayString = DateFormat('yyyy-MM-dd')
-                                      .format(widget.today!);
-
-                                  Booking booking = Booking();
-                                  booking.roomId = widget.roomId;
-                                  booking.startDate = DateTime.parse(
-                                      "$todayString $startTime:00");
-                                  booking.endDate = DateTime.parse(
-                                      "$todayString $endTime:00");
-                                  booking.summary =
-                                      eventName.replaceAll('"', '\\"');
-                                  booking.description = eventDesc
-                                      .replaceAll('"', '\\"')
-                                      .replaceAll('\n', '\\n');
-                                  booking.meetingType = selectedType;
-                                  List tempAmen = [];
-                                  for (var element in listAmenities) {
-                                    tempAmen.add({
-                                      '"AmenitiesID"': element.amenitiesId,
-                                      '"Amount"': element.qty
-                                    });
-                                  }
-                                  List tempFood = [];
-                                  for (var element in listFoods) {
-                                    tempFood.add({
-                                      '"FoodAmenitiesID"': element.amenitiesId,
-                                      '"Amount"': element.qty
-                                    });
-                                  }
-                                  booking.amenities = tempAmen;
-                                  booking.foodAmenities = tempFood;
-                                  booking.attendants = [];
-
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => InputNipBookingDialog(
-                                      booking: booking,
+                                // SUCCESS ASIGN ROOM
+                                showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      AlertDialogWhiteCustomContent(
+                                    title: "Success",
+                                    content: Column(
+                                      children: [
+                                        Text(
+                                          'This tablet assigned to',
+                                          style: helveticaText.copyWith(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.w300,
+                                            color: eerieBlack,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        Text(
+                                          'Warung Konco',
+                                          style: helveticaText.copyWith(
+                                            fontSize: 36,
+                                            fontWeight: FontWeight.w700,
+                                            color: eerieBlack,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ).then((value) {
-                                    if (value) {
-                                      Navigator.of(context).pop();
-                                    }
-                                  });
-                                  //BOOKING FUNCTION
-                                  // bookingRoom(booking).then((value) {
-                                  //   print(value);
-                                  //   if (value['Status'] == "200") {
-                                  //     showDialog(
-                                  //       context: context,
-                                  //       builder: (context) => AlertDialogBlack(
-                                  //         title: value['Title'],
-                                  //         contentText: value['Message'],
-                                  //         isSuccess: true,
-                                  //       ),
-                                  //     );
-                                  //   } else {
-                                  //     showDialog(
-                                  //       context: context,
-                                  //       builder: (context) => AlertDialogBlack(
-                                  //         title: value['Title'],
-                                  //         contentText: value['Message'],
-                                  //         isSuccess: false,
-                                  //       ),
-                                  //     );
-                                  //   }
-                                  // }).onError((error, stackTrace) {
-                                  //   showDialog(
-                                  //     context: context,
-                                  //     builder: (context) => AlertDialogBlack(
-                                  //       title: 'Failed connect to API',
-                                  //       contentText: error.toString(),
-                                  //       isSuccess: false,
-                                  //     ),
-                                  //   );
-                                  // });
-                                  //END BOOKING FUNCTION
-                                }
+                                  ),
+                                );
+                                // SUCCESS BOOKING ROOM
+                                // showDialog(
+                                //   context: context,
+                                //   builder: (context) =>
+                                //       AlertDialogWhiteCustomContent(
+                                //     title: "Book Success",
+                                //     content: Column(
+                                //       crossAxisAlignment:
+                                //           CrossAxisAlignment.start,
+                                //       children: [
+                                //         Text(
+                                //           "Amphiteatre",
+                                //           style: helveticaText.copyWith(
+                                //             fontSize: 32,
+                                //             fontWeight: FontWeight.w700,
+                                //             color: eerieBlack,
+                                //           ),
+                                //         ),
+                                //         const SizedBox(
+                                //           height: 20,
+                                //         ),
+                                //         Row(
+                                //           children: [
+                                //             RichText(
+                                //               text: TextSpan(
+                                //                 text: 'Title: ',
+                                //                 style: helveticaText.copyWith(
+                                //                   fontSize: 24,
+                                //                   fontWeight: FontWeight.w700,
+                                //                   color: eerieBlack,
+                                //                   height: 1.67,
+                                //                 ),
+                                //                 children: [
+                                //                   TextSpan(
+                                //                     text:
+                                //                         'Facility Complaint Campaign',
+                                //                     style:
+                                //                         helveticaText.copyWith(
+                                //                       fontSize: 24,
+                                //                       fontWeight:
+                                //                           FontWeight.w300,
+                                //                       color: eerieBlack,
+                                //                       height: 1.67,
+                                //                     ),
+                                //                   )
+                                //                 ],
+                                //               ),
+                                //             ),
+                                //           ],
+                                //         ),
+                                //         RichText(
+                                //           text: TextSpan(
+                                //             text: 'Host: ',
+                                //             style: helveticaText.copyWith(
+                                //               fontSize: 24,
+                                //               fontWeight: FontWeight.w700,
+                                //               color: eerieBlack,
+                                //               height: 1.67,
+                                //             ),
+                                //             children: [
+                                //               TextSpan(
+                                //                 text:
+                                //                     'Edward Evannov Santo Wiguna',
+                                //                 style: helveticaText.copyWith(
+                                //                   fontSize: 24,
+                                //                   fontWeight: FontWeight.w300,
+                                //                   color: eerieBlack,
+                                //                   height: 1.67,
+                                //                 ),
+                                //               )
+                                //             ],
+                                //           ),
+                                //         ),
+                                //         RichText(
+                                //           text: TextSpan(
+                                //             text: 'Time: ',
+                                //             style: helveticaText.copyWith(
+                                //               fontSize: 24,
+                                //               fontWeight: FontWeight.w700,
+                                //               color: eerieBlack,
+                                //               height: 1.67,
+                                //             ),
+                                //             children: [
+                                //               TextSpan(
+                                //                 text:
+                                //                     '12:00 - 14:00 (21 Dec 2022)',
+                                //                 style: helveticaText.copyWith(
+                                //                   fontSize: 24,
+                                //                   fontWeight: FontWeight.w300,
+                                //                   color: eerieBlack,
+                                //                   height: 1.67,
+                                //                 ),
+                                //               )
+                                //             ],
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ),
+                                // );
+
+                                // if (formKey.currentState!.validate()) {
+                                //   formKey.currentState!.save();
+                                //   var todayString = DateFormat('yyyy-MM-dd')
+                                //       .format(widget.today!);
+
+                                //   Booking booking = Booking();
+                                //   booking.roomId = widget.roomId;
+                                //   booking.startDate = DateTime.parse(
+                                //       "$todayString $startTime:00");
+                                //   booking.endDate = DateTime.parse(
+                                //       "$todayString $endTime:00");
+                                //   booking.summary =
+                                //       eventName.replaceAll('"', '\\"');
+                                //   booking.description = eventDesc
+                                //       .replaceAll('"', '\\"')
+                                //       .replaceAll('\n', '\\n');
+                                //   booking.meetingType = selectedType;
+                                //   List tempAmen = [];
+                                //   for (var element in listAmenities) {
+                                //     tempAmen.add({
+                                //       '"AmenitiesID"': element.amenitiesId,
+                                //       '"Amount"': element.qty
+                                //     });
+                                //   }
+                                //   List tempFood = [];
+                                //   for (var element in listFoods) {
+                                //     tempFood.add({
+                                //       '"FoodAmenitiesID"': element.amenitiesId,
+                                //       '"Amount"': element.qty
+                                //     });
+                                //   }
+                                //   booking.amenities = tempAmen;
+                                //   booking.foodAmenities = tempFood;
+                                //   booking.attendants = [];
+
+                                //   showDialog(
+                                //     context: context,
+                                //     builder: (context) => InputNipBookingDialog(
+                                //       booking: booking,
+                                //     ),
+                                //   ).then((value) {
+                                //     if (value) {
+                                //       Navigator.of(context).pop();
+                                //     }
+                                //   });
+                                //   //BOOKING FUNCTION
+                                //   // bookingRoom(booking).then((value) {
+                                //   //   print(value);
+                                //   //   if (value['Status'] == "200") {
+                                //   //     showDialog(
+                                //   //       context: context,
+                                //   //       builder: (context) => AlertDialogBlack(
+                                //   //         title: value['Title'],
+                                //   //         contentText: value['Message'],
+                                //   //         isSuccess: true,
+                                //   //       ),
+                                //   //     );
+                                //   //   } else {
+                                //   //     showDialog(
+                                //   //       context: context,
+                                //   //       builder: (context) => AlertDialogBlack(
+                                //   //         title: value['Title'],
+                                //   //         contentText: value['Message'],
+                                //   //         isSuccess: false,
+                                //   //       ),
+                                //   //     );
+                                //   //   }
+                                //   // }).onError((error, stackTrace) {
+                                //   //   showDialog(
+                                //   //     context: context,
+                                //   //     builder: (context) => AlertDialogBlack(
+                                //   //       title: 'Failed connect to API',
+                                //   //       contentText: error.toString(),
+                                //   //       isSuccess: false,
+                                //   //     ),
+                                //   //   );
+                                //   // });
+                                //   //END BOOKING FUNCTION
+                                // }
                               },
                               child: const Text(
                                 'Book Now',
@@ -595,6 +735,18 @@ class _BookingPageState extends State<BookingPage> {
                         ),
                       ),
                     ),
+                    isLoading
+                        ? Container(
+                            height: MediaQuery.of(context).size.height,
+                            width: MediaQuery.of(context).size.width,
+                            color: Colors.white.withOpacity(0.5),
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                color: eerieBlack,
+                              ),
+                            ),
+                          )
+                        : const SizedBox()
                   ],
                 ),
               ),

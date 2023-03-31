@@ -18,6 +18,7 @@ import 'package:mrbs_tablet/widgets/buttons/regular_button.dart';
 import 'package:mrbs_tablet/widgets/clock.dart';
 import 'package:mrbs_tablet/widgets/dialogs/alert_dialog.dart';
 import 'package:mrbs_tablet/widgets/dialogs/booking_page_input_nip.dart';
+import 'package:mrbs_tablet/widgets/dialogs/cancel_dialog.dart';
 import 'package:mrbs_tablet/widgets/dialogs/check_in_nip_dialog.dart';
 import 'package:mrbs_tablet/widgets/dialogs/initiate_room_dialog.dart';
 import 'package:mrbs_tablet/widgets/dialogs/schedulre.dart';
@@ -41,6 +42,7 @@ class _HomePageState extends State<HomePage> {
 
   bool isLoadingChangeStatus = true;
   bool isNextMeetingChange = false;
+  bool isInitLoading = true;
 
   String today = "";
   String status = "Available";
@@ -323,6 +325,7 @@ class _HomePageState extends State<HomePage> {
       apiReq.getDetailRoom(roomId).then((value) async {
         print(value);
         setState(() {
+          isInitLoading = false;
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             // auth = Provider.of<Auth>(context, listen: false);
             Provider.of<MrbsTabletModel>(context, listen: false).setRoomName(
@@ -330,12 +333,36 @@ class _HomePageState extends State<HomePage> {
                 value['Data']['RoomAlias'] ?? "",
                 value['Data']['RoomTypeName']);
           });
-
-          roomName = value['Data']['RoomAlias'] ?? "";
-          roomType = value['Data']['RoomTypeName'];
-          roomCapacity = value['Data']['MaxCapacity'].toString();
-          defaultFacility = value['Data']['DefaultAmenities'];
+          if (value['Status'].toString() == "200") {
+            roomName = value['Data']['RoomAlias'] ?? "";
+            roomType = value['Data']['RoomTypeName'];
+            roomCapacity = value['Data']['MaxCapacity'].toString();
+            defaultFacility = value['Data']['DefaultAmenities'];
+          } else {
+            roomName = "-";
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialogBlack(
+                title: value['Title'],
+                contentText: value['Messsage'],
+                isSuccess: false,
+              ),
+            );
+          }
         });
+      }).onError((error, stackTrace) {
+        setState(() {
+          isInitLoading = false;
+          roomName = "-";
+        });
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: "Error getDetailRoom",
+            contentText: error.toString(),
+            isSuccess: false,
+          ),
+        );
       });
     });
   }
@@ -387,7 +414,17 @@ class _HomePageState extends State<HomePage> {
                         const SizedBox(
                           height: 75,
                         ),
-                        roomInfo(),
+                        isInitLoading
+                            ? const SizedBox(
+                                height: 100,
+                                width: double.infinity,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: eerieBlack,
+                                  ),
+                                ),
+                              )
+                            : roomInfo(),
                         const SizedBox(
                           height: 30,
                         ),
@@ -1294,6 +1331,12 @@ class _HomePageState extends State<HomePage> {
                     InkWell(
                       onTap: () {
                         print('Cancel');
+                        showDialog(
+                          context: context,
+                          builder: (context) => CancelEventDialog(
+                            bookingId: bookingId,
+                          ),
+                        );
                       },
                       child: const Icon(
                         Icons.close_sharp,

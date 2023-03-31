@@ -8,6 +8,7 @@ import 'package:mrbs_tablet/model/model.dart';
 import 'package:mrbs_tablet/model/room_event_class.dart';
 import 'package:mrbs_tablet/model/room_event_data_source.dart';
 import 'package:mrbs_tablet/widgets/dialogs/alert_dialog.dart';
+import 'package:mrbs_tablet/widgets/dialogs/detail_event_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -182,6 +183,13 @@ class _ScheduleDrawerState extends State<ScheduleDrawer> {
                       onTap: (calendarTapDetails) {
                         if (calendarTapDetails.targetElement ==
                             CalendarElement.calendarCell) {}
+                        if (calendarTapDetails.targetElement ==
+                            CalendarElement.appointment) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => DetailEventDialog(),
+                          );
+                        }
                       },
                       appointmentBuilder: appointmentBuilder,
                       view: CalendarView.day,

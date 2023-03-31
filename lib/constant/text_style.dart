@@ -14,7 +14,7 @@ const TextStyle arialText = TextStyle(
 
 const TextStyle titlePage = TextStyle(
   fontFamily: 'Helvetica',
-  fontSize: 24,
+  fontSize: 36,
   fontWeight: FontWeight.w700,
 );
 
