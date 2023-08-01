@@ -282,7 +282,7 @@ class AlertDialogWhiteCustomContent extends StatelessWidget {
           maxWidth: 750,
           minWidth: 600,
           minHeight: 200,
-          maxHeight: double.infinity,
+          // maxHeight: double.infinity,
         ),
         child: Padding(
           padding: const EdgeInsets.only(
@@ -293,8 +293,7 @@ class AlertDialogWhiteCustomContent extends StatelessWidget {
           ),
           child: Stack(
             children: [
-              Container(
-                // color: Colors.amber,
+              SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,

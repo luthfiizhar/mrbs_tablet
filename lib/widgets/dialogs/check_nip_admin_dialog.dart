@@ -14,7 +14,10 @@ import 'package:provider/provider.dart';
 class CheckNipAdminDialog extends StatefulWidget {
   CheckNipAdminDialog({
     super.key,
+    this.roomName = "",
   });
+
+  String roomName;
 
   @override
   State<CheckNipAdminDialog> createState() => _CheckNipAdminDialogState();
@@ -146,7 +149,42 @@ class _CheckNipAdminDialogState extends State<CheckNipAdminDialog> {
                                   });
                                   apiReq.checkNipAdmin(nip).then((value) {
                                     if (value['Status'].toString() == "200") {
-                                      Navigator.of(context).pop(true);
+                                      // SUCCESS ASIGN ROOM
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            AlertDialogWhiteCustomContent(
+                                          title: "Book Success",
+                                          content: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'This tablet assigned to',
+                                                style: helveticaText.copyWith(
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.w300,
+                                                  color: eerieBlack,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              Text(
+                                                widget.roomName,
+                                                style: helveticaText.copyWith(
+                                                  fontSize: 36,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: eerieBlack,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ).then(
+                                        (value) =>
+                                            Navigator.of(context).pop(true),
+                                      );
                                     } else {
                                       showDialog(
                                         context: context,

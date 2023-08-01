@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mrbs_tablet/constant/color.dart';
 import 'package:mrbs_tablet/constant/text_style.dart';
+import 'package:mrbs_tablet/model/room_event_class.dart';
 import 'package:mrbs_tablet/widgets/buttons/regular_button.dart';
 
 class DetailEventDialog extends StatelessWidget {
-  const DetailEventDialog({super.key});
+  DetailEventDialog({
+    super.key,
+    RoomEvent? roomEvent,
+  }) : roomEvent = roomEvent ?? RoomEvent();
+
+  RoomEvent roomEvent;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +39,7 @@ class DetailEventDialog extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Meeting Partnersip",
+                    roomEvent.eventName!,
                     style: helveticaText.copyWith(
                       fontSize: 36,
                       fontWeight: FontWeight.w700,
@@ -55,7 +61,7 @@ class DetailEventDialog extends StatelessWidget {
                             color: davysGray,
                           ),
                           Text(
-                            "Amphiteather - 2nd Floor",
+                            "${roomEvent.location} - ${roomEvent.floor}",
                             style: helveticaText.copyWith(
                               fontSize: 24,
                               fontWeight: FontWeight.w300,
@@ -73,7 +79,7 @@ class DetailEventDialog extends StatelessWidget {
                             color: davysGray,
                           ),
                           Text(
-                            "24 Feb 2023",
+                            roomEvent.date,
                             style: helveticaText.copyWith(
                               fontSize: 24,
                               fontWeight: FontWeight.w300,
@@ -91,7 +97,7 @@ class DetailEventDialog extends StatelessWidget {
                             color: davysGray,
                           ),
                           Text(
-                            "08:30 - 18:00",
+                            roomEvent.duration,
                             style: helveticaText.copyWith(
                               fontSize: 24,
                               fontWeight: FontWeight.w300,
@@ -121,7 +127,7 @@ class DetailEventDialog extends StatelessWidget {
                     spacing: 15,
                     children: [
                       Text(
-                        "Edward Evannov Santo Wiguna",
+                        roomEvent.empName,
                         style: helveticaText.copyWith(
                           fontSize: 24,
                           fontWeight: FontWeight.w400,
@@ -129,7 +135,7 @@ class DetailEventDialog extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "edward.wiguna@kawanlamacorp.com",
+                        roomEvent.email,
                         style: helveticaText.copyWith(
                           fontSize: 24,
                           fontWeight: FontWeight.w300,
@@ -137,7 +143,7 @@ class DetailEventDialog extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "81068 / +628567559276",
+                        "${roomEvent.avaya} / +${roomEvent.phoneNumber}",
                         style: helveticaText.copyWith(
                           fontSize: 24,
                           fontWeight: FontWeight.w300,
@@ -158,7 +164,9 @@ class DetailEventDialog extends StatelessWidget {
                   disabled: false,
                   fontSize: 24,
                   padding: ButtonSize().longSize(),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
                 ),
               ),
             ),

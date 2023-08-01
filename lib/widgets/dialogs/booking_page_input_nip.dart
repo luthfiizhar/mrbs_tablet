@@ -148,21 +148,133 @@ class _InputNipBookingDialogState extends State<InputNipBookingDialog> {
 
                                   //BOOKING FUNCTION
                                   apiReq.bookingRoom(booking).then((value) {
-                                    print(value);
+                                    print(value['Data']);
                                     setState(() {
                                       isLoading = false;
                                     });
-                                    if (value['Status'] == "200") {
+                                    if (value['Status'].toString() == "200") {
+                                      String host =
+                                          value['Data'][0]['Host'] ?? "";
+                                      String roomName =
+                                          value['Data'][0]['RoomName'] ?? "";
+                                      String summary =
+                                          value['Data'][0]['Summary'] ?? "";
+                                      String time =
+                                          value['Data'][0]['Time'] ?? "";
+                                      //SUCCESS BOOKING ROOM
                                       showDialog(
                                         context: context,
-                                        builder: (context) => AlertDialogWhite(
-                                          title: value['Title'],
-                                          contentText: value['Message'],
-                                          isSuccess: true,
+                                        builder: (context) =>
+                                            AlertDialogWhiteCustomContent(
+                                          title: "Book Success",
+                                          content: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                roomName,
+                                                style: helveticaText.copyWith(
+                                                  fontSize: 32,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: eerieBlack,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      text: 'Title: ',
+                                                      style: helveticaText
+                                                          .copyWith(
+                                                        fontSize: 24,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        color: eerieBlack,
+                                                        height: 1.67,
+                                                      ),
+                                                      children: [
+                                                        TextSpan(
+                                                          text: summary,
+                                                          style: helveticaText
+                                                              .copyWith(
+                                                            fontSize: 24,
+                                                            fontWeight:
+                                                                FontWeight.w300,
+                                                            color: eerieBlack,
+                                                            height: 1.67,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              RichText(
+                                                text: TextSpan(
+                                                  text: 'Host: ',
+                                                  style: helveticaText.copyWith(
+                                                    fontSize: 24,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: eerieBlack,
+                                                    height: 1.67,
+                                                  ),
+                                                  children: [
+                                                    TextSpan(
+                                                      text: host,
+                                                      style: helveticaText
+                                                          .copyWith(
+                                                        fontSize: 24,
+                                                        fontWeight:
+                                                            FontWeight.w300,
+                                                        color: eerieBlack,
+                                                        height: 1.67,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              RichText(
+                                                text: TextSpan(
+                                                  text: 'Time: ',
+                                                  style: helveticaText.copyWith(
+                                                    fontSize: 24,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: eerieBlack,
+                                                    height: 1.67,
+                                                  ),
+                                                  children: [
+                                                    TextSpan(
+                                                      text: time,
+                                                      style: helveticaText
+                                                          .copyWith(
+                                                        fontSize: 24,
+                                                        fontWeight:
+                                                            FontWeight.w300,
+                                                        color: eerieBlack,
+                                                        height: 1.67,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ).then((value) {
-                                        Navigator.of(context).pop(true);
-                                      });
+                                      ).then((value) =>
+                                          Navigator.of(context).pop(true));
+                                      // showDialog(
+                                      //   context: context,
+                                      //   builder: (context) => AlertDialogWhite(
+                                      //     title: value['Title'],
+                                      //     contentText: value['Message'],
+                                      //     isSuccess: true,
+                                      //   ),
+                                      // ).then((value) {
+                                      //   Navigator.of(context).pop(true);
+                                      // });
                                     } else {
                                       showDialog(
                                         context: context,

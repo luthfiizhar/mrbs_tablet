@@ -66,6 +66,15 @@ class _ScheduleDrawerState extends State<ScheduleDrawer> {
             isDark: isDark,
             bookingID: element['BookingID'],
             eventName: element['Summary'],
+            empName: element['EmpName'],
+            phoneNumber: element['PhoneNumber'],
+            avaya: element['Avaya'],
+            email: element['Email'],
+            duration: element['Duration'],
+            floor: element['AreaName'],
+            date: element['Date'],
+            roomName: element['RoomName'],
+            location: element['RoomName'],
           ),
         );
         i++;
@@ -185,9 +194,12 @@ class _ScheduleDrawerState extends State<ScheduleDrawer> {
                             CalendarElement.calendarCell) {}
                         if (calendarTapDetails.targetElement ==
                             CalendarElement.appointment) {
+                          print(calendarTapDetails.appointments);
                           showDialog(
                             context: context,
-                            builder: (context) => DetailEventDialog(),
+                            builder: (context) => DetailEventDialog(
+                              roomEvent: calendarTapDetails.appointments!.first,
+                            ),
                           );
                         }
                       },

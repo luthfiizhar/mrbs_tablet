@@ -233,9 +233,16 @@ class _InitiateRoomDialogState extends State<InitiateRoomDialog> {
                             formKey.currentState!.save();
                             // await widget.setNip!(nip, widget.isIn);
                             // Navigator.of(context).pop();
+                            for (var element in roomList) {
+                              if (element['RoomID'] == roomId) {
+                                roomAlias = element['RoomAlias'];
+                              }
+                            }
                             showDialog(
                               context: context,
-                              builder: (context) => CheckNipAdminDialog(),
+                              builder: (context) => CheckNipAdminDialog(
+                                roomName: roomAlias,
+                              ),
                             ).then((value) async {
                               if (value) {
                                 var box = await Hive.openBox('RoomInfo');
