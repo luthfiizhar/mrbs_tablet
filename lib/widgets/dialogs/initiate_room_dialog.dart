@@ -8,6 +8,7 @@ import 'package:mrbs_tablet/model/model.dart';
 import 'package:mrbs_tablet/widgets/buttons/regular_button.dart';
 import 'package:mrbs_tablet/widgets/buttons/text_button.dart';
 import 'package:mrbs_tablet/widgets/dialogs/alert_dialog.dart';
+import 'package:mrbs_tablet/widgets/dialogs/check_nip_admin_dialog.dart';
 import 'package:mrbs_tablet/widgets/dropdown.dart';
 import 'package:mrbs_tablet/widgets/regular_input_field.dart';
 import 'package:provider/provider.dart';
@@ -232,12 +233,19 @@ class _InitiateRoomDialogState extends State<InitiateRoomDialog> {
                             formKey.currentState!.save();
                             // await widget.setNip!(nip, widget.isIn);
                             // Navigator.of(context).pop();
-                            var box = await Hive.openBox('RoomInfo');
-                            box.put('roomName', roomName);
-                            box.put('roomId', roomId);
-                            box.put('roomAlias', roomAlias);
+                            showDialog(
+                              context: context,
+                              builder: (context) => CheckNipAdminDialog(),
+                            ).then((value) async {
+                              if (value) {
+                                var box = await Hive.openBox('RoomInfo');
+                                box.put('roomName', roomName);
+                                box.put('roomId', roomId);
+                                box.put('roomAlias', roomAlias);
 
-                            Phoenix.rebirth(context);
+                                Phoenix.rebirth(context);
+                              }
+                            });
                           }
                         },
                         fontSize: 24,

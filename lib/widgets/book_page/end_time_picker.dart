@@ -235,7 +235,7 @@ class _PickEndTimeDialogState extends State<PickEndTimeDialog> {
                 ),
               ),
               Align(
-                alignment: Alignment.bottomCenter,
+                alignment: Alignment.bottomRight,
                 child: SizedBox(
                   width: 610,
                   child: Row(
